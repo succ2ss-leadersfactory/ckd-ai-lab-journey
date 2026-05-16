@@ -365,6 +365,23 @@ function App() {
           </>
         )}
 
+        {step === 11 && (
+          <>
+            <h2>M2. 성과관리 Decision Lab</h2>
+            <p className="subtitle">
+              성과 문제를 단정하지 않고 원인 가설로 나누며, AI를 활용해 성과대화 질문과 다음 2주 행동 약속을 설계합니다.
+            </p>
+            <div className="status-box">
+              <strong>M2 핵심 질문</strong>
+              <span>성과 문제를 어떻게 원인 가설과 행동 약속으로 바꿀 것인가?</span>
+            </div>
+            <div className="status-box">
+              <strong>M2 산출물</strong>
+              <span>성과 원인 가설 / 성과대화 질문 / 2주 행동 약속</span>
+            </div>
+          </>
+        )}
+
         <div className="nav-row">
           <button
             className="secondary-button"
@@ -376,8 +393,8 @@ function App() {
           </button>
           <button
             className="primary-button"
-            disabled={!canNext || step === 10}
-            onClick={() => setStep((prev) => Math.min(10, prev + 1))}
+            disabled={!canNext || step === 11}
+            onClick={() => setStep((prev) => Math.min(11, prev + 1))}
             type="button"
           >
             {step === 0 ? "Lab Journey 시작하기" : "다음"}
