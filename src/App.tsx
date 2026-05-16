@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import M2FullLabIntro from "./components/M2FullLabIntro";
 import M2ReasonHypothesis from "./components/M2ReasonHypothesis";
+import M2AnonymizedContext from "./components/M2AnonymizedContext";
 import { m2Issues } from "./data/m2Data";
 
 const roles = ["상황 정리자", "AI 질문자", "답변 검토자", "현장 언어 수정자", "공유자"];
@@ -41,6 +42,7 @@ function App() {
   const [m2Scan, setM2Scan] = useState<M2ScanItem[]>(m2Issues.map(() => ({ relevance: "", difficulty: "", helpAreas: [] })));
   const [selectedM2IssueCodes, setSelectedM2IssueCodes] = useState<string[]>([]);
   const [selectedM2ReasonIds, setSelectedM2ReasonIds] = useState<string[]>([]);
+  const [m2AnonymizedContext, setM2AnonymizedContext] = useState("");
 
   const allChecked = checked.every(Boolean);
   const currentCard = securityCards[cardIndex];
@@ -104,7 +106,8 @@ function App() {
     step === 14 ||
     step === 15 ||
     (step === 16 && selectedM2ReasonIds.length > 0) ||
-    step === 17
+    step === 17 ||
+    (step === 18 && m2AnonymizedContext.trim().length > 0)
   );
 
   return (
@@ -130,7 +133,8 @@ function App() {
         {step === 15 && <M2FullLabIntro issue={fullLabIssue} />}
         {step === 16 && <M2ReasonHypothesis selectedReasonIds={selectedM2ReasonIds} onToggleReason={toggleM2Reason} />}
         {step === 17 && (<><h2>원인 가설 선택 완료</h2><p className="subtitle">선택한 원인 가설을 바탕으로 다음 단계에서는 실제 고객명·제품명·팀원 실명 없이 익명화된 상황 설명을 작성합니다.</p><div className="status-box"><strong>선택한 원인 가설 수</strong><span>{selectedM2ReasonIds.length}개</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4C. 익명화 상황 입력 화면</span></div></>)}
-        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 17} onClick={() => setStep((prev) => Math.min(17, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
+        {step === 18 && <M2AnonymizedContext issue={fullLabIssue} value={m2AnonymizedContext} onChange={setM2AnonymizedContext} />}
+        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 18} onClick={() => setStep((prev) => Math.min(18, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
   );
