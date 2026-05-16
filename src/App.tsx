@@ -34,7 +34,8 @@ function App() {
     (step === 1 && sessionCode.trim()) ||
     (step === 2 && teamName.trim() && participantName.trim()) ||
     (step === 3 && selectedRole) ||
-    (step === 4 && allChecked);
+    (step === 4 && allChecked) ||
+    step === 5;
 
   return (
     <main className="app-shell">
@@ -148,8 +149,8 @@ function App() {
           <>
             <h2>Lab Journey 안내</h2>
             <p className="subtitle">
-              기본 입장 정보가 확인되었습니다. 다음 개발 단계에서는 M1
-              AI 활용 보안 기준 & 질문 설계 Lab을 구현합니다.
+              기본 입장 정보가 확인되었습니다. 다음 화면부터 M1
+              AI 활용 보안 기준 & 질문 설계 Lab을 진행합니다.
             </p>
             <div className="status-box">
               <strong>입장 정보</strong>
@@ -157,6 +158,20 @@ function App() {
               <span>팀명: {teamName}</span>
               <span>참여자: {participantName}</span>
               <span>역할: {selectedRole}</span>
+            </div>
+          </>
+        )}
+
+        {step === 6 && (
+          <>
+            <h2>M1. AI 활용 보안 기준 & 질문 설계 Lab</h2>
+            <p className="subtitle">
+              AI에게 무엇을, 어떻게, 어느 선까지 물을 것인지 연습합니다.
+              먼저 AI에 입력 가능한 정보와 입력하면 안 되는 정보를 구분합니다.
+            </p>
+            <div className="status-box">
+              <strong>M1 산출물</strong>
+              <span>보안 기준을 반영한 AI 질문문 1개</span>
             </div>
           </>
         )}
@@ -172,8 +187,8 @@ function App() {
           </button>
           <button
             className="primary-button"
-            disabled={!canNext || step === 5}
-            onClick={() => setStep((prev) => Math.min(5, prev + 1))}
+            disabled={!canNext || step === 6}
+            onClick={() => setStep((prev) => Math.min(6, prev + 1))}
             type="button"
           >
             {step === 0 ? "Lab Journey 시작하기" : "다음"}
