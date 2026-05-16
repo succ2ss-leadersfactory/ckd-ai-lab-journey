@@ -60,11 +60,23 @@ function App() {
   const [cardAnswers, setCardAnswers] = useState<string[]>(
     securityCards.map(() => "")
   );
+  const [promptRole, setPromptRole] = useState("당신은 영업팀장 리더십 코치입니다.");
+  const [promptSituation, setPromptSituation] = useState("활동량은 많지만 성과 전환이 낮은 팀원과 1 on 1을 준비하려고 합니다.");
+  const [promptRequest, setPromptRequest] = useState("팀장이 이 팀원과 나눌 대화 흐름과 질문을 작성해주세요.");
+  const [promptCondition, setPromptCondition] = useState("팀원을 단정하지 말고, 노력을 인정하되 성과 책임이 흐려지지 않게 작성해주세요. 실제 고객명, 병원명, 의료진명, 제품명, 내부자료는 사용하지 않습니다.");
+  const [promptFormat, setPromptFormat] = useState("대화 시작 문장 / 질문 5개 / 피해야 할 표현 3개 / 다음 1주 행동 약속 / 팀장 지원으로 정리해주세요.");
 
   const allChecked = checked.every(Boolean);
   const currentCard = securityCards[cardIndex];
   const answeredCount = cardAnswers.filter(Boolean).length;
   const allCardsAnswered = answeredCount === securityCards.length;
+
+  const promptReady =
+    promptRole.trim() &&
+    promptSituation.trim() &&
+    promptRequest.trim() &&
+    promptCondition.trim() &&
+    promptFormat.trim();
 
   const canNext =
     step === 0 ||
@@ -74,7 +86,9 @@ function App() {
     (step === 4 && allChecked) ||
     step === 5 ||
     step === 6 ||
-    (step === 7 && allCardsAnswered);
+    (step === 7 && allCardsAnswered) ||
+    step === 8 ||
+    (step === 9 && promptReady);
 
   return (
     <main className="app-shell">
@@ -291,6 +305,48 @@ function App() {
           </>
         )}
 
+        {step === 9 && (
+          <>
+            <h2>좋은 AI 질문문 작성</h2>
+            <p className="subtitle">
+              역할, 상황, 요청, 조건, 출력 형식을 채우면 다음 단계에서 하나의 프롬프트로 조합합니다.
+            </p>
+            <label className="field-group">
+              역할
+              <textarea value={promptRole} onChange={(e) => setPromptRole(e.target.value)} />
+            </label>
+            <label className="field-group">
+              상황
+              <textarea value={promptSituation} onChange={(e) => setPromptSituation(e.target.value)} />
+            </label>
+            <label className="field-group">
+              요청
+              <textarea value={promptRequest} onChange={(e) => setPromptRequest(e.target.value)} />
+            </label>
+            <label className="field-group">
+              조건
+              <textarea value={promptCondition} onChange={(e) => setPromptCondition(e.target.value)} />
+            </label>
+            <label className="field-group">
+              출력 형식
+              <textarea value={promptFormat} onChange={(e) => setPromptFormat(e.target.value)} />
+            </label>
+          </>
+        )}
+
+        {step === 10 && (
+          <>
+            <h2>AI 질문문 작성 완료</h2>
+            <p className="subtitle">
+              다음 단계에서는 작성한 내용을 하나의 최종 프롬프트로 미리 보고 복사할 수 있게 합니다.
+            </p>
+            <div className="status-box">
+              <strong>다음 개발 단계</strong>
+              <span>M1-4A. 최종 프롬프트 미리보기와 복사 기능</span>
+            </div>
+          </>
+        )}
+
         <div className="nav-row">
           <button
             className="secondary-button"
@@ -302,8 +358,8 @@ function App() {
           </button>
           <button
             className="primary-button"
-            disabled={!canNext || step === 8}
-            onClick={() => setStep((prev) => Math.min(8, prev + 1))}
+            disabled={!canNext || step === 10}
+            onClick={() => setStep((prev) => Math.min(10, prev + 1))}
             type="button"
           >
             {step === 0 ? "Lab Journey 시작하기" : "다음"}
