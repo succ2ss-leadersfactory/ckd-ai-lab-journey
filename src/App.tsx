@@ -435,7 +435,7 @@ function App() {
           <>
             <h2>성과관리 이슈 스캔</h2>
             <p className="subtitle">
-              5개 이슈를 빠르게 훑고, 우리 팀 관련도·판단 난이도·AI 활용 가능성을 체크합니다. 이 단계는 정답 찾기가 아니라 팀의 실제 고민을 찾는 과정입니다.
+              5개 이슈를 빠르게 훑고, 우리 팀 관련도·판단 난이도·AI 도움받고 싶은 지점을 체크합니다. 이 단계는 정답 찾기가 아니라 팀의 실제 고민을 찾는 과정입니다.
             </p>
             <div className="scan-list">
               {m2Issues.map((issue, index) => (
@@ -479,7 +479,7 @@ function App() {
                     </div>
                   </div>
                   <div className="pulse-row">
-                    <span>AI 활용 가능성</span>
+                    <span>AI 도움받고 싶은 지점</span>
                     <div className="chip-row">
                       {scanLevels.map((level) => (
                         <button
