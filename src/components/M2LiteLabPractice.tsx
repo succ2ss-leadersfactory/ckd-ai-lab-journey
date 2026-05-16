@@ -26,20 +26,20 @@ function M2LiteLabPractice({ value, onChange }: M2LiteLabPracticeProps) {
 
   return (
     <>
-      <h2>M2 Lite Lab 질문·행동 약속</h2>
+      <h2>M2 Lite Lab 질문·실행 계획</h2>
       <p className="subtitle">
-        두 번째 선택 상황은 빠르게 적용합니다. 깊은 분석보다 바로 쓸 질문과 짧은 실행 약속을 만드는 데 집중합니다.
+        두 번째 선택 상황은 빠르게 적용합니다. 깊은 분석보다 바로 쓸 성과 코칭 질문과 짧은 실행 계획을 만드는 데 집중합니다.
       </p>
 
       <div className="status-box">
         <strong>Lite Lab 작성 기준</strong>
         <span>질문은 평가나 추궁이 아니라 함께 확인하는 방식으로 작성합니다.</span>
-        <span>행동 약속은 다음 1~2주 안에 실행 가능한 수준으로 작성합니다.</span>
-        <span>팀장 지원 문장은 팀원이 혼자 책임지는 구조가 되지 않도록 작성합니다.</span>
+        <span>2주 실행 계획은 다음 1~2주 안에 실행 가능한 수준으로 작성합니다.</span>
+        <span>팀장의 지원 문장은 팀원이 혼자 책임지는 구조가 되지 않도록 작성합니다.</span>
       </div>
 
       <label className="field-group">
-        1. 팀원에게 물어볼 핵심 질문 1 <span className="required-mark">필수</span>
+        1. 성과 코칭 질문 1 <span className="required-mark">필수</span>
         <textarea
           value={value.question1}
           onChange={(event) => updateField("question1", event.target.value)}
@@ -48,7 +48,7 @@ function M2LiteLabPractice({ value, onChange }: M2LiteLabPracticeProps) {
       </label>
 
       <label className="field-group">
-        2. 팀원에게 물어볼 핵심 질문 2 <span className="required-mark">필수</span>
+        2. 성과 코칭 질문 2 <span className="required-mark">필수</span>
         <textarea
           value={value.question2}
           onChange={(event) => updateField("question2", event.target.value)}
@@ -57,7 +57,7 @@ function M2LiteLabPractice({ value, onChange }: M2LiteLabPracticeProps) {
       </label>
 
       <label className="field-group">
-        3. 팀원에게 물어볼 핵심 질문 3 <span className="required-mark">필수</span>
+        3. 성과 코칭 질문 3 <span className="required-mark">필수</span>
         <textarea
           value={value.question3}
           onChange={(event) => updateField("question3", event.target.value)}
@@ -66,7 +66,7 @@ function M2LiteLabPractice({ value, onChange }: M2LiteLabPracticeProps) {
       </label>
 
       <label className="field-group">
-        4. 짧은 행동 약속 1개 <span className="required-mark">필수</span>
+        4. 2주 실행 계획 1개 <span className="required-mark">필수</span>
         <textarea
           value={value.actionPromise}
           onChange={(event) => updateField("actionPromise", event.target.value)}
@@ -75,11 +75,11 @@ function M2LiteLabPractice({ value, onChange }: M2LiteLabPracticeProps) {
       </label>
 
       <label className="field-group">
-        5. 팀장 지원 문장 1개 <span className="required-mark">필수</span>
+        5. 팀장의 지원 문장 1개 <span className="required-mark">필수</span>
         <textarea
           value={value.leaderSupport}
           onChange={(event) => updateField("leaderSupport", event.target.value)}
-          placeholder="예: 제가 첫 주 중간에 함께 점검하면서 막히는 지점과 필요한 지원을 확인하겠습니다."
+          placeholder="예: 제가 첫 주 중간에 함께 체크하면서 막히는 지점과 필요한 지원을 확인하겠습니다."
         />
       </label>
 
