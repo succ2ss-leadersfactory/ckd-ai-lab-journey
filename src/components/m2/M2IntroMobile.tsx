@@ -1,12 +1,10 @@
-import MobileShell from "../common/MobileShell";
 import AppHeader from "../common/AppHeader";
 import ProgressMap from "../common/ProgressMap";
 import SecurityBadge from "../common/SecurityBadge";
-import BottomNav from "../common/BottomNav";
 
 type M2IntroMobileProps = {
-  onPrev: () => void;
-  onNext: () => void;
+  onPrev?: () => void;
+  onNext?: () => void;
   canGoPrev?: boolean;
 };
 
@@ -18,9 +16,9 @@ const m2ProgressSteps = [
   { label: "완료", status: "upcoming" as const },
 ];
 
-function M2IntroMobile({ onPrev, onNext, canGoPrev = true }: M2IntroMobileProps) {
+function M2IntroMobile(_props: M2IntroMobileProps) {
   return (
-    <MobileShell>
+    <>
       <AppHeader
         moduleTitle="M2 성과관리 Decision Lab"
         moduleLabel="성과를 행동과 대화로 전환"
@@ -53,15 +51,7 @@ function M2IntroMobile({ onPrev, onNext, canGoPrev = true }: M2IntroMobileProps)
           </div>
         </div>
       </section>
-
-      <BottomNav
-        onPrev={onPrev}
-        onNext={onNext}
-        canGoPrev={canGoPrev}
-        canGoNext={true}
-        successText="M2 성과관리 이슈 스캔으로 이동할 수 있습니다."
-      />
-    </MobileShell>
+    </>
   );
 }
 
