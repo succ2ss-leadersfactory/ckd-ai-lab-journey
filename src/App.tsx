@@ -4,6 +4,7 @@ import M2ReasonHypothesis from "./components/M2ReasonHypothesis";
 import M2AnonymizedContext from "./components/M2AnonymizedContext";
 import M2PromptGenerator from "./components/M2PromptGenerator";
 import M2AiResponsePaste from "./components/M2AiResponsePaste";
+import M2AnswerReview from "./components/M2AnswerReview";
 import { m2Issues } from "./data/m2Data";
 
 const roles = ["상황 정리자", "AI 질문자", "답변 검토자", "현장 언어 수정자", "공유자"];
@@ -46,6 +47,7 @@ function App() {
   const [selectedM2ReasonIds, setSelectedM2ReasonIds] = useState<string[]>([]);
   const [m2AnonymizedContext, setM2AnonymizedContext] = useState("");
   const [m2AiResponse, setM2AiResponse] = useState("");
+  const [selectedM2RiskIds, setSelectedM2RiskIds] = useState<string[]>([]);
 
   const allChecked = checked.every(Boolean);
   const currentCard = securityCards[cardIndex];
@@ -90,6 +92,9 @@ function App() {
   const toggleM2Reason = (reasonId: string) => {
     setSelectedM2ReasonIds((current) => current.includes(reasonId) ? current.filter((item) => item !== reasonId) : [...current, reasonId]);
   };
+  const toggleM2Risk = (riskId: string) => {
+    setSelectedM2RiskIds((current) => current.includes(riskId) ? current.filter((item) => item !== riskId) : [...current, riskId]);
+  };
 
   const canNext = Boolean(
     step === 0 ||
@@ -114,7 +119,8 @@ function App() {
     step === 19 ||
     step === 20 ||
     (step === 21 && m2AiResponse.trim().length > 0) ||
-    step === 22
+    step === 22 ||
+    (step === 23 && selectedM2RiskIds.length > 0)
   );
 
   return (
@@ -145,7 +151,9 @@ function App() {
         {step === 20 && <M2PromptGenerator issue={fullLabIssue} selectedReasonIds={selectedM2ReasonIds} anonymizedContext={m2AnonymizedContext} />}
         {step === 21 && <M2AiResponsePaste value={m2AiResponse} onChange={setM2AiResponse} />}
         {step === 22 && (<><h2>AI 답변 입력 완료</h2><p className="subtitle">AI 답변이 입력되었습니다. 다음 단계에서는 이 답변을 보안성, 현장성, 성과 책임, 실행 가능성 관점에서 감별합니다.</p><div className="status-box"><strong>입력된 답변 길이</strong><span>{m2AiResponse.trim().length}자</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4F. AI 답변 감별 화면</span></div></>)}
-        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 22} onClick={() => setStep((prev) => Math.min(22, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
+        {step === 23 && <M2AnswerReview selectedRiskIds={selectedM2RiskIds} onToggleRisk={toggleM2Risk} />}
+        {step === 24 && (<><h2>AI 답변 감별 완료</h2><p className="subtitle">AI 답변에서 위험 요소를 감별했습니다. 다음 단계에서는 이 결과를 바탕으로 실제 팀장이 말할 수 있는 현장 언어로 수정합니다.</p><div className="status-box"><strong>선택한 위험 요소 수</strong><span>{selectedM2RiskIds.length}개</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4G. 현장 언어 수정 화면</span></div></>)}
+        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 24} onClick={() => setStep((prev) => Math.min(24, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
   );
