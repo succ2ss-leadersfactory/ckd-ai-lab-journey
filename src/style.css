@@ -1,0 +1,109 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f3f5f8;
+  color: #172033;
+}
+
+button {
+  font-family: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.hero-card {
+  width: 100%;
+  max-width: 760px;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 40px 32px;
+  box-shadow: 0 20px 60px rgba(20, 32, 55, 0.12);
+  border: 1px solid #e5eaf2;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #3157d5;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+}
+
+.subtitle {
+  margin: 18px 0 0;
+  font-size: 18px;
+  line-height: 1.7;
+  color: #4d5b73;
+}
+
+.status-box {
+  margin-top: 28px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: #f5f7ff;
+  border: 1px solid #dfe6ff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.status-box strong {
+  font-size: 14px;
+  color: #3157d5;
+}
+
+.status-box span {
+  font-size: 16px;
+  color: #26334d;
+}
+
+.primary-button {
+  margin-top: 28px;
+  width: 100%;
+  border: none;
+  border-radius: 18px;
+  padding: 16px 20px;
+  background: #3157d5;
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  background: #2646ad;
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .hero-card {
+    padding: 30px 22px;
+    border-radius: 24px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+}
