@@ -9,7 +9,7 @@ type M2IntroMobileProps = {
 };
 
 const m2ProgressSteps = [
-  { label: "이슈 스캔", status: "current" as const },
+  { label: "이슈 살펴보기", status: "current" as const },
   { label: "2개 선택", status: "upcoming" as const },
   { label: "Full Lab", status: "upcoming" as const },
   { label: "Lite Lab", status: "upcoming" as const },
