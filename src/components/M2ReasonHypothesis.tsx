@@ -1,3 +1,5 @@
+import type { M2Issue } from "../data/m2Data";
+
 export type M2Reason = {
   id: string;
   title: string;
@@ -32,24 +34,37 @@ export const m2Reasons: M2Reason[] = [
   },
   {
     id: "leader-support",
-    title: "팀장 지원",
+    title: "팀장의 지원",
     question: "팀장이 기준, 정보, 코칭, 자원을 충분히 제공했는가?",
   },
 ];
 
 type M2ReasonHypothesisProps = {
+  issue?: M2Issue;
   selectedReasonIds: string[];
   onToggleReason: (reasonId: string) => void;
 };
 
-function M2ReasonHypothesis({ selectedReasonIds, onToggleReason }: M2ReasonHypothesisProps) {
+function M2ReasonHypothesis({ issue, selectedReasonIds, onToggleReason }: M2ReasonHypothesisProps) {
   return (
     <>
-      <h2>원인 가설 선택</h2>
+      <h2>성과 원인 가설 선택</h2>
       <p className="subtitle">
-        성과 문제를 팀원 의지나 태도 문제로 단정하지 않고, 가능한 원인 가설을 넓게 선택합니다.
-        복수 선택할 수 있습니다.
+        선택한 상황을 기준으로 가능한 원인 가설을 넓게 선택합니다. 복수 선택할 수 있습니다.
       </p>
+
+      {issue && (
+        <article className="scan-card">
+          <div className="scan-card-header">
+            <b>Full</b>
+            <div>
+              <strong>{issue.code}. {issue.title}</strong>
+              <p>{issue.situation}</p>
+              <span>판단 초점: {issue.focus}</span>
+            </div>
+          </div>
+        </article>
+      )}
 
       <div className="scan-list">
         {m2Reasons.map((reason) => {
@@ -72,7 +87,7 @@ function M2ReasonHypothesis({ selectedReasonIds, onToggleReason }: M2ReasonHypot
         <strong>선택 진행률</strong>
         <span>{selectedReasonIds.length}개 원인 가설 선택</span>
         {selectedReasonIds.length === 0 && <span>가능성이 있는 원인 가설을 1개 이상 선택해주세요.</span>}
-        {selectedReasonIds.length > 0 && <span>선택한 가설을 바탕으로 다음 단계에서 익명화된 상황 설명을 작성합니다.</span>}
+        {selectedReasonIds.length > 0 && <span>선택한 가설을 바탕으로 다음 단계에서 상황을 일반화해 입력합니다.</span>}
       </div>
     </>
   );
