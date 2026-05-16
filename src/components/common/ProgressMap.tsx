@@ -1,3 +1,4 @@
+import "./progressMap.css";
 export type ProgressStep = {
   label: string;
   status: "done" | "current" | "upcoming";
