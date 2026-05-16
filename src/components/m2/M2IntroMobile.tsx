@@ -31,12 +31,12 @@ function M2IntroMobile(_props: M2IntroMobileProps) {
 
       <section className="status-box">
         <strong>M2 핵심 질문</strong>
-        <span>성과 문제를 어떻게 원인 가설과 행동 약속으로 바꿀 것인가?</span>
+        <span>성과 문제의 원인을 찾고 가설을 설정한 뒤, 최종 실행 계획으로 어떻게 만들 것인가?</span>
       </section>
 
       <section className="status-box">
         <strong>M2 산출물</strong>
-        <span>성과 원인 가설 / 성과대화 질문 / 2주 행동 약속</span>
+        <span>성과 문제 원인 및 가설 / 성과 코칭 질문 / 2주 실행 계획</span>
       </section>
 
       <section className="scan-card">
