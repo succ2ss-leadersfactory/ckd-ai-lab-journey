@@ -46,6 +46,40 @@ const securityCards = [
 ];
 
 const cardOptions = ["입력 가능", "익명화 후 가능", "입력 금지", "내부 기준 확인 필요"];
+const scanLevels = ["낮음", "중간", "높음"];
+
+const m2Issues = [
+  {
+    code: "A",
+    title: "목표 상향에 대한 반발",
+    situation: "팀 목표가 상향되었지만 팀원들이 ‘현장 상황을 모른다’고 반응한다.",
+    focus: "목표 수용성, 메시지, 상향 정렬",
+  },
+  {
+    code: "B",
+    title: "활동량은 많지만 성과 전환이 낮음",
+    situation: "한 팀원은 활동량은 많지만 실제 성과 전환이 낮다.",
+    focus: "활동 품질, 우선순위, 후속조치",
+  },
+  {
+    code: "C",
+    title: "고성과자의 정보 공유 부족",
+    situation: "고성과 팀원은 개인 성과는 좋지만 팀 내 정보 공유가 부족하다.",
+    focus: "인정, 팀 기여, 협업 요청",
+  },
+  {
+    code: "D",
+    title: "목표 미달 팀원의 방어 반응",
+    situation: "목표 미달 팀원이 ‘저는 누구보다 열심히 하고 있다’고 방어한다.",
+    focus: "노력 인정, 성과 기준, 공동 원인 탐색",
+  },
+  {
+    code: "E",
+    title: "팀 전체의 목표 압박과 피로감",
+    situation: "팀 전체가 목표 압박으로 피로감을 보이고 실행 리듬이 무너진다.",
+    focus: "우선순위 재정리, 실행 리듬, 팀장 메시지",
+  },
+];
 
 function App() {
   const [step, setStep] = useState(0);
@@ -65,11 +99,18 @@ function App() {
   const [promptRequest, setPromptRequest] = useState("팀장이 이 팀원과 나눌 대화 흐름과 질문을 작성해주세요.");
   const [promptCondition, setPromptCondition] = useState("팀원을 단정하지 말고, 노력을 인정하되 성과 책임이 흐려지지 않게 작성해주세요. 실제 고객명, 병원명, 의료진명, 제품명, 내부자료는 사용하지 않습니다.");
   const [promptFormat, setPromptFormat] = useState("대화 시작 문장 / 질문 5개 / 피해야 할 표현 3개 / 다음 1주 행동 약속 / 팀장 지원으로 정리해주세요.");
+  const [m2Scan, setM2Scan] = useState(
+    m2Issues.map(() => ({ relevance: "", difficulty: "", aiFit: "" }))
+  );
 
   const allChecked = checked.every(Boolean);
   const currentCard = securityCards[cardIndex];
   const answeredCount = cardAnswers.filter(Boolean).length;
   const allCardsAnswered = answeredCount === securityCards.length;
+  const m2ScanCompleteCount = m2Scan.filter(
+    (item) => item.relevance && item.difficulty && item.aiFit
+  ).length;
+  const allM2ScanComplete = m2ScanCompleteCount === m2Issues.length;
 
   const promptReady =
     promptRole.trim() &&
@@ -91,6 +132,12 @@ function App() {
     }
   };
 
+  const updateM2Scan = (index: number, key: "relevance" | "difficulty" | "aiFit", value: string) => {
+    const next = [...m2Scan];
+    next[index] = { ...next[index], [key]: value };
+    setM2Scan(next);
+  };
+
   const canNext =
     step === 0 ||
     (step === 1 && sessionCode.trim()) ||
@@ -102,7 +149,9 @@ function App() {
     (step === 7 && allCardsAnswered) ||
     step === 8 ||
     (step === 9 && promptReady) ||
-    step === 10;
+    step === 10 ||
+    step === 11 ||
+    (step === 12 && allM2ScanComplete);
 
   return (
     <main className="app-shell">
@@ -382,6 +431,93 @@ function App() {
           </>
         )}
 
+        {step === 12 && (
+          <>
+            <h2>성과관리 이슈 스캔</h2>
+            <p className="subtitle">
+              5개 이슈를 빠르게 훑고, 우리 팀 관련도·판단 난이도·AI 활용 가능성을 체크합니다. 이 단계는 정답 찾기가 아니라 팀의 실제 고민을 찾는 과정입니다.
+            </p>
+            <div className="scan-list">
+              {m2Issues.map((issue, index) => (
+                <article className="scan-card" key={issue.code}>
+                  <div className="scan-card-header">
+                    <b>{issue.code}</b>
+                    <div>
+                      <strong>{issue.title}</strong>
+                      <p>{issue.situation}</p>
+                      <span>판단 초점: {issue.focus}</span>
+                    </div>
+                  </div>
+                  <div className="pulse-row">
+                    <span>우리 팀 관련도</span>
+                    <div className="chip-row">
+                      {scanLevels.map((level) => (
+                        <button
+                          key={level}
+                          className={m2Scan[index].relevance === level ? "chip-button selected" : "chip-button"}
+                          onClick={() => updateM2Scan(index, "relevance", level)}
+                          type="button"
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="pulse-row">
+                    <span>판단 난이도</span>
+                    <div className="chip-row">
+                      {scanLevels.map((level) => (
+                        <button
+                          key={level}
+                          className={m2Scan[index].difficulty === level ? "chip-button selected" : "chip-button"}
+                          onClick={() => updateM2Scan(index, "difficulty", level)}
+                          type="button"
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="pulse-row">
+                    <span>AI 활용 가능성</span>
+                    <div className="chip-row">
+                      {scanLevels.map((level) => (
+                        <button
+                          key={level}
+                          className={m2Scan[index].aiFit === level ? "chip-button selected" : "chip-button"}
+                          onClick={() => updateM2Scan(index, "aiFit", level)}
+                          type="button"
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className="status-box compact-status">
+              <strong>스캔 진행률</strong>
+              <span>{m2ScanCompleteCount} / {m2Issues.length}개 이슈 체크 완료</span>
+              {!allM2ScanComplete && <span>모든 이슈를 체크하면 다음 단계로 이동할 수 있습니다.</span>}
+              {allM2ScanComplete && <span>성과관리 이슈 스캔을 완료했습니다. 다음 단계에서는 핵심 상황 2개를 선택합니다.</span>}
+            </div>
+          </>
+        )}
+
+        {step === 13 && (
+          <>
+            <h2>성과관리 이슈 스캔 완료</h2>
+            <p className="subtitle">
+              다음 개발 단계에서는 스캔 결과를 보고 핵심 상황 2개를 선택하는 화면을 구현합니다.
+            </p>
+            <div className="status-box">
+              <strong>다음 개발 단계</strong>
+              <span>M2-3. 핵심 상황 2개 선택 화면</span>
+            </div>
+          </>
+        )}
+
         <div className="nav-row">
           <button
             className="secondary-button"
@@ -393,8 +529,8 @@ function App() {
           </button>
           <button
             className="primary-button"
-            disabled={!canNext || step === 11}
-            onClick={() => setStep((prev) => Math.min(11, prev + 1))}
+            disabled={!canNext || step === 13}
+            onClick={() => setStep((prev) => Math.min(13, prev + 1))}
             type="button"
           >
             {step === 0 ? "Lab Journey 시작하기" : "다음"}
