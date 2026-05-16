@@ -17,6 +17,36 @@ const securityItems = [
   "AI 답변은 참고자료이며 최종 판단은 팀장이 하겠습니다.",
 ];
 
+const securityCards = [
+  {
+    text: "우리 팀 주간 회의 안건을 성과관리 중심으로 정리해줘.",
+    answer: "입력 가능",
+    feedback: "민감정보가 없고 일반적인 회의 준비 목적입니다.",
+  },
+  {
+    text: "목표 미달 팀원과 면담할 질문을 만들어줘. 실제 이름은 제외하고 상황만 설명할게.",
+    answer: "익명화 후 가능",
+    feedback: "팀원 실명과 민감정보를 제거하면 리더십 대화 준비에 활용할 수 있습니다.",
+  },
+  {
+    text: "A병원 김OO 교수의 최근 처방 감소 원인을 분석해줘.",
+    answer: "입력 금지",
+    feedback: "고객명, 의료진명, 처방 관련 민감정보가 포함되어 있습니다.",
+  },
+  {
+    text: "지난달 우리 팀 실제 매출자료를 보고 팀원별 문제점을 분석해줘.",
+    answer: "입력 금지",
+    feedback: "내부 영업자료와 개인 평가 정보가 포함될 수 있습니다.",
+  },
+  {
+    text: "활동량은 많지만 성과 전환이 낮은 팀원과 나눌 1 on 1 질문을 만들어줘.",
+    answer: "입력 가능",
+    feedback: "일반화된 상황이며 팀장 대화 준비 목적입니다.",
+  },
+];
+
+const cardOptions = ["입력 가능", "익명화 후 가능", "입력 금지", "내부 기준 확인 필요"];
+
 function App() {
   const [step, setStep] = useState(0);
   const [sessionCode, setSessionCode] = useState("");
@@ -26,8 +56,13 @@ function App() {
   const [checked, setChecked] = useState<boolean[]>(
     securityItems.map(() => false)
   );
+  const [cardIndex, setCardIndex] = useState(0);
+  const [cardAnswers, setCardAnswers] = useState<string[]>(
+    securityCards.map(() => "")
+  );
 
   const allChecked = checked.every(Boolean);
+  const currentCard = securityCards[cardIndex];
 
   const canNext =
     step === 0 ||
@@ -35,7 +70,8 @@ function App() {
     (step === 2 && teamName.trim() && participantName.trim()) ||
     (step === 3 && selectedRole) ||
     (step === 4 && allChecked) ||
-    step === 5;
+    step === 5 ||
+    step === 6;
 
   return (
     <main className="app-shell">
@@ -176,6 +212,63 @@ function App() {
           </>
         )}
 
+        {step === 7 && (
+          <>
+            <h2>AI 보안 기준 카드 분류</h2>
+            <p className="subtitle">
+              아래 문장을 AI에 입력해도 되는지 판단해주세요.
+            </p>
+            <div className="quiz-card">
+              <strong>카드 {cardIndex + 1} / {securityCards.length}</strong>
+              <p>{currentCard.text}</p>
+            </div>
+            <div className="choice-grid">
+              {cardOptions.map((option) => (
+                <button
+                  key={option}
+                  className={
+                    cardAnswers[cardIndex] === option
+                      ? "choice-button selected"
+                      : "choice-button"
+                  }
+                  onClick={() => {
+                    const next = [...cardAnswers];
+                    next[cardIndex] = option;
+                    setCardAnswers(next);
+                  }}
+                  type="button"
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+            {cardAnswers[cardIndex] && (
+              <div className="feedback-box">
+                <strong>권장 판단: {currentCard.answer}</strong>
+                <span>{currentCard.feedback}</span>
+              </div>
+            )}
+            <div className="nav-row inner-nav">
+              <button
+                className="secondary-button"
+                disabled={cardIndex === 0}
+                onClick={() => setCardIndex((prev) => Math.max(0, prev - 1))}
+                type="button"
+              >
+                이전 카드
+              </button>
+              <button
+                className="secondary-button"
+                disabled={cardIndex === securityCards.length - 1}
+                onClick={() => setCardIndex((prev) => Math.min(securityCards.length - 1, prev + 1))}
+                type="button"
+              >
+                다음 카드
+              </button>
+            </div>
+          </>
+        )}
+
         <div className="nav-row">
           <button
             className="secondary-button"
@@ -187,8 +280,8 @@ function App() {
           </button>
           <button
             className="primary-button"
-            disabled={!canNext || step === 6}
-            onClick={() => setStep((prev) => Math.min(6, prev + 1))}
+            disabled={!canNext || step === 7}
+            onClick={() => setStep((prev) => Math.min(7, prev + 1))}
             type="button"
           >
             {step === 0 ? "Lab Journey 시작하기" : "다음"}
