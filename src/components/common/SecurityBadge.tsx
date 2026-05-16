@@ -1,3 +1,5 @@
+import "./securityBadge.css";
+
 type SecurityBadgeProps = {
   compact?: boolean;
 };
