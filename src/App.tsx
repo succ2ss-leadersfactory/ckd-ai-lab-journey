@@ -6,6 +6,7 @@ import M2PromptGenerator from "./components/M2PromptGenerator";
 import M2AiResponsePaste from "./components/M2AiResponsePaste";
 import M2AnswerReview from "./components/M2AnswerReview";
 import M2FieldRewrite from "./components/M2FieldRewrite";
+import M2ActionCommitment from "./components/M2ActionCommitment";
 import { m2Issues } from "./data/m2Data";
 
 const roles = ["상황 정리자", "AI 질문자", "답변 검토자", "현장 언어 수정자", "공유자"];
@@ -50,6 +51,7 @@ function App() {
   const [m2AiResponse, setM2AiResponse] = useState("");
   const [selectedM2RiskIds, setSelectedM2RiskIds] = useState<string[]>([]);
   const [m2FieldRewrite, setM2FieldRewrite] = useState("");
+  const [m2ActionCommitment, setM2ActionCommitment] = useState({ memberAction: "", leaderSupport: "", checkInTiming: "" });
 
   const allChecked = checked.every(Boolean);
   const currentCard = securityCards[cardIndex];
@@ -60,6 +62,7 @@ function App() {
   const selectedM2Issues = m2Issues.filter((issue) => selectedM2IssueCodes.includes(issue.code));
   const fullLabIssue = selectedM2Issues[0];
   const promptReady = Boolean(promptRole.trim() && promptSituation.trim() && promptRequest.trim() && promptCondition.trim() && promptFormat.trim());
+  const actionCommitmentReady = Boolean(m2ActionCommitment.memberAction.trim() && m2ActionCommitment.leaderSupport.trim() && m2ActionCommitment.checkInTiming.trim());
   const finalPrompt = useMemo(() => `${promptRole}\n\n[상황]\n${promptSituation}\n\n[요청]\n${promptRequest}\n\n[조건]\n${promptCondition}\n\n[출력 형식]\n${promptFormat}`, [promptRole, promptSituation, promptRequest, promptCondition, promptFormat]);
 
   const copyPrompt = async () => {
@@ -124,7 +127,9 @@ function App() {
     step === 22 ||
     (step === 23 && selectedM2RiskIds.length > 0) ||
     step === 24 ||
-    (step === 25 && m2FieldRewrite.trim().length > 0)
+    (step === 25 && m2FieldRewrite.trim().length > 0) ||
+    step === 26 ||
+    (step === 27 && actionCommitmentReady)
   );
 
   return (
@@ -159,7 +164,9 @@ function App() {
         {step === 24 && (<><h2>AI 답변 감별 완료</h2><p className="subtitle">AI 답변에서 위험 요소를 감별했습니다. 다음 단계에서는 이 결과를 바탕으로 실제 팀장이 말할 수 있는 현장 언어로 수정합니다.</p><div className="status-box"><strong>선택한 위험 요소 수</strong><span>{selectedM2RiskIds.length}개</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4G. 현장 언어 수정 화면</span></div></>)}
         {step === 25 && <M2FieldRewrite value={m2FieldRewrite} onChange={setM2FieldRewrite} />}
         {step === 26 && (<><h2>현장 언어 수정 완료</h2><p className="subtitle">AI 답변을 실제 팀장이 말할 수 있는 현장 언어로 수정했습니다. 다음 단계에서는 2주 행동 약속을 작성합니다.</p><div className="status-box"><strong>수정한 문장</strong><span>{m2FieldRewrite}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4H. 2주 행동 약속 화면</span></div></>)}
-        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 26} onClick={() => setStep((prev) => Math.min(26, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
+        {step === 27 && <M2ActionCommitment value={m2ActionCommitment} onChange={setM2ActionCommitment} />}
+        {step === 28 && (<><h2>M2 Full Lab 완료</h2><p className="subtitle">성과관리 Full Lab이 완료되었습니다. 성과 문제를 원인 가설로 보고, AI 답변을 감별하고, 현장 언어와 2주 행동 약속으로 전환했습니다.</p><div className="status-box"><strong>팀원이 할 행동</strong><span>{m2ActionCommitment.memberAction}</span></div><div className="status-box"><strong>팀장 지원</strong><span>{m2ActionCommitment.leaderSupport}</span></div><div className="status-box"><strong>중간 점검 시점</strong><span>{m2ActionCommitment.checkInTiming}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2 Lite Lab 시작 화면</span></div></>)}
+        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 28} onClick={() => setStep((prev) => Math.min(28, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
   );
