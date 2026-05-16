@@ -50,7 +50,6 @@ function App() {
   const allM2ScanComplete = m2ScanCompleteCount === m2Issues.length;
   const selectedM2Issues = m2Issues.filter((issue) => selectedM2IssueCodes.includes(issue.code));
   const fullLabIssue = selectedM2Issues[0];
-
   const promptReady = Boolean(promptRole.trim() && promptSituation.trim() && promptRequest.trim() && promptCondition.trim() && promptFormat.trim());
   const finalPrompt = useMemo(() => `${promptRole}\n\n[상황]\n${promptSituation}\n\n[요청]\n${promptRequest}\n\n[조건]\n${promptCondition}\n\n[출력 형식]\n${promptFormat}`, [promptRole, promptSituation, promptRequest, promptCondition, promptFormat]);
 
@@ -104,7 +103,8 @@ function App() {
     (step === 13 && selectedM2IssueCodes.length === 2) ||
     step === 14 ||
     step === 15 ||
-    (step === 16 && selectedM2ReasonIds.length > 0)
+    (step === 16 && selectedM2ReasonIds.length > 0) ||
+    step === 17
   );
 
   return (
@@ -112,7 +112,6 @@ function App() {
       <section className="hero-card">
         <p className="eyebrow">CKD AI Sales Leadership Lab</p>
         <h1>AI 활용 영업팀장 리더십 Lab Journey</h1>
-
         {step === 0 && (<><p className="subtitle">성과를 읽고, 일을 정렬하고, 사람을 움직이는 AI 활용 실습형 웹앱 MVP입니다.</p><div className="status-box"><strong>오늘의 흐름</strong><span>세션 입력 → 팀 정보 입력 → 역할 선택 → AI 보안 서약 → Lab Journey 안내</span></div></>)}
         {step === 1 && (<><h2>세션코드 입력</h2><p className="subtitle">강사가 안내한 세션코드를 입력해주세요.</p><input className="text-input" value={sessionCode} onChange={(e) => setSessionCode(e.target.value)} placeholder="예: CKD-AI-001" /></>)}
         {step === 2 && (<><h2>팀 정보 입력</h2><p className="subtitle">팀명과 이름 또는 닉네임을 입력해주세요.</p><input className="text-input" value={teamName} onChange={(e) => setTeamName(e.target.value)} placeholder="팀명 예: 1팀" /><input className="text-input" value={participantName} onChange={(e) => setParticipantName(e.target.value)} placeholder="이름 또는 닉네임 예: 김팀장" /></>)}
@@ -130,8 +129,8 @@ function App() {
         {step === 14 && (<><h2>핵심 상황 선택 완료</h2><p className="subtitle">선택한 2개 상황을 확인해주세요. 다음 단계에서는 첫 번째 상황을 Full Lab으로 깊게 다룹니다.</p><div className="scan-list">{selectedM2Issues.map((issue, index) => (<article className="scan-card" key={issue.code}><div className="scan-card-header"><b>{index === 0 ? "Full" : "Lite"}</b><div><strong>{issue.code}. {issue.title}</strong><p>{issue.situation}</p><span>판단 초점: {issue.focus}</span></div></div></article>))}</div><div className="status-box"><strong>다음 단계</strong><span>첫 번째 선택 상황을 Full Lab으로 깊게 다룹니다.</span></div></>)}
         {step === 15 && <M2FullLabIntro issue={fullLabIssue} />}
         {step === 16 && <M2ReasonHypothesis selectedReasonIds={selectedM2ReasonIds} onToggleReason={toggleM2Reason} />}
-
-        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 16} onClick={() => setStep((prev) => Math.min(16, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
+        {step === 17 && (<><h2>원인 가설 선택 완료</h2><p className="subtitle">선택한 원인 가설을 바탕으로 다음 단계에서는 실제 고객명·제품명·팀원 실명 없이 익명화된 상황 설명을 작성합니다.</p><div className="status-box"><strong>선택한 원인 가설 수</strong><span>{selectedM2ReasonIds.length}개</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4C. 익명화 상황 입력 화면</span></div></>)}
+        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 17} onClick={() => setStep((prev) => Math.min(17, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
   );
