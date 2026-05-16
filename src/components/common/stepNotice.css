@@ -1,0 +1,59 @@
+.step-notice {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 10px;
+  align-items: start;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid #d8dfec;
+  background: #f8faff;
+  color: #34425e;
+}
+
+.step-notice-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  background: #ffffff;
+  color: #3157d5;
+  border: 1px solid #d8dfec;
+}
+
+.step-notice-message {
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+.step-notice.info {
+  border-color: #d8dfec;
+  background: #f8faff;
+}
+
+.step-notice.warning {
+  border-color: #ffd9a8;
+  background: #fff8ee;
+  color: #7a4a0b;
+}
+
+.step-notice.warning .step-notice-icon {
+  border-color: #ffd9a8;
+  color: #a56300;
+}
+
+.step-notice.success {
+  border-color: #bfe6d3;
+  background: #f0fbf6;
+  color: #17603b;
+}
+
+.step-notice.success .step-notice-icon {
+  border-color: #bfe6d3;
+  color: #17603b;
+}
