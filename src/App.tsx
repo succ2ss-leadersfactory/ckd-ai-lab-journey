@@ -8,6 +8,7 @@ import M2AnswerReview from "./components/M2AnswerReview";
 import M2FieldRewrite from "./components/M2FieldRewrite";
 import M2ActionCommitment from "./components/M2ActionCommitment";
 import M2LiteLabIntro from "./components/M2LiteLabIntro";
+import M2LiteLabPractice from "./components/M2LiteLabPractice";
 import { m2Issues } from "./data/m2Data";
 
 const roles = ["상황 정리자", "AI 질문자", "답변 검토자", "현장 언어 수정자", "공유자"];
@@ -53,6 +54,7 @@ function App() {
   const [selectedM2RiskIds, setSelectedM2RiskIds] = useState<string[]>([]);
   const [m2FieldRewrite, setM2FieldRewrite] = useState("");
   const [m2ActionCommitment, setM2ActionCommitment] = useState({ memberAction: "", leaderSupport: "", checkInTiming: "" });
+  const [m2LiteLabPractice, setM2LiteLabPractice] = useState({ question1: "", question2: "", question3: "", actionPromise: "", leaderSupport: "" });
 
   const allChecked = checked.every(Boolean);
   const currentCard = securityCards[cardIndex];
@@ -65,6 +67,7 @@ function App() {
   const liteLabIssue = selectedM2Issues[1];
   const promptReady = Boolean(promptRole.trim() && promptSituation.trim() && promptRequest.trim() && promptCondition.trim() && promptFormat.trim());
   const actionCommitmentReady = Boolean(m2ActionCommitment.memberAction.trim() && m2ActionCommitment.leaderSupport.trim() && m2ActionCommitment.checkInTiming.trim());
+  const liteLabReady = Boolean(m2LiteLabPractice.question1.trim() && m2LiteLabPractice.question2.trim() && m2LiteLabPractice.question3.trim() && m2LiteLabPractice.actionPromise.trim() && m2LiteLabPractice.leaderSupport.trim());
   const finalPrompt = useMemo(() => `${promptRole}\n\n[상황]\n${promptSituation}\n\n[요청]\n${promptRequest}\n\n[조건]\n${promptCondition}\n\n[출력 형식]\n${promptFormat}`, [promptRole, promptSituation, promptRequest, promptCondition, promptFormat]);
 
   const copyPrompt = async () => {
@@ -132,7 +135,9 @@ function App() {
     (step === 25 && m2FieldRewrite.trim().length > 0) ||
     step === 26 ||
     (step === 27 && actionCommitmentReady) ||
-    step === 28
+    step === 28 ||
+    step === 29 ||
+    (step === 30 && liteLabReady)
   );
 
   return (
@@ -170,7 +175,9 @@ function App() {
         {step === 27 && <M2ActionCommitment value={m2ActionCommitment} onChange={setM2ActionCommitment} />}
         {step === 28 && (<><h2>M2 Full Lab 완료</h2><p className="subtitle">성과관리 Full Lab이 완료되었습니다. 성과 문제를 원인 가설로 보고, AI 답변을 감별하고, 현장 언어와 2주 행동 약속으로 전환했습니다.</p><div className="status-box"><strong>팀원이 할 행동</strong><span>{m2ActionCommitment.memberAction}</span></div><div className="status-box"><strong>팀장 지원</strong><span>{m2ActionCommitment.leaderSupport}</span></div><div className="status-box"><strong>중간 점검 시점</strong><span>{m2ActionCommitment.checkInTiming}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2 Lite Lab 시작 화면</span></div></>)}
         {step === 29 && <M2LiteLabIntro issue={liteLabIssue} />}
-        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 29} onClick={() => setStep((prev) => Math.min(29, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
+        {step === 30 && <M2LiteLabPractice value={m2LiteLabPractice} onChange={setM2LiteLabPractice} />}
+        {step === 31 && (<><h2>M2 성과관리 Lab 완료</h2><p className="subtitle">성과관리 Full Lab과 Lite Lab을 모두 완료했습니다. 이제 성과 문제를 단정하지 않고, 원인 가설·현장 언어·행동 약속으로 전환하는 흐름을 경험했습니다.</p><div className="status-box"><strong>Lite Lab 질문 1</strong><span>{m2LiteLabPractice.question1}</span></div><div className="status-box"><strong>Lite Lab 행동 약속</strong><span>{m2LiteLabPractice.actionPromise}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M3 업무관리 Alignment Lab</span></div></>)}
+        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 31} onClick={() => setStep((prev) => Math.min(31, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
   );
