@@ -1,0 +1,26 @@
+.answer-review-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.answer-review-card strong {
+  display: block;
+  font-size: 17px;
+  line-height: 1.35;
+  color: #172033;
+}
+
+.answer-review-card span {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: #4d5b73;
+}
+
+.answer-review-card.selected strong,
+.answer-review-card.selected span {
+  color: #3157d5;
+}
