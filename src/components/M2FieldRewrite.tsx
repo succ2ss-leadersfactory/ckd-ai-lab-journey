@@ -6,21 +6,21 @@ type M2FieldRewriteProps = {
 function M2FieldRewrite({ value, onChange }: M2FieldRewriteProps) {
   return (
     <>
-      <h2>현장 언어 수정</h2>
+      <h2>현장 표현으로 다듬기</h2>
       <p className="subtitle">
-        AI 답변을 그대로 사용하지 않고, 실제 영업팀장이 팀원에게 말할 수 있는 문장으로 고쳐봅니다.
+        AI 답변을 그대로 사용하지 않고, 실제 영업팀장이 팀원에게 말할 수 있는 표현으로 다듬습니다.
       </p>
 
       <div className="status-box">
-        <strong>수정 기준</strong>
+        <strong>다듬기 기준</strong>
         <span>팀원의 노력을 인정하되 성과 책임이 흐려지지 않게 합니다.</span>
         <span>원인을 단정하지 않고 함께 확인하는 질문으로 바꿉니다.</span>
         <span>다음 1~2주 안에 실행할 행동이 드러나게 합니다.</span>
-        <span>팀장이 지원할 부분도 함께 포함합니다.</span>
+        <span>팀장의 지원도 함께 포함합니다.</span>
       </div>
 
       <label className="field-group">
-        실제 팀장이 말할 문장
+        내가 실제로 말할 문장
         <textarea
           value={value}
           onChange={(event) => onChange(event.target.value)}
@@ -30,7 +30,7 @@ function M2FieldRewrite({ value, onChange }: M2FieldRewriteProps) {
 
       <div className="status-box compact-status">
         <strong>작성 진행률</strong>
-        <span>{value.trim() ? "현장 언어 수정 문장이 입력되었습니다." : "실제 팀장이 말할 문장을 1개 이상 작성해주세요."}</span>
+        <span>{value.trim() ? "현장 표현으로 다듬은 문장이 입력되었습니다." : "내가 실제로 말할 문장을 1개 이상 작성해주세요."}</span>
       </div>
     </>
   );
