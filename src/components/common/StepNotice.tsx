@@ -1,3 +1,5 @@
+import "./stepNotice.css";
+
 type StepNoticeProps = {
   message: string;
   status?: "info" | "warning" | "success";
