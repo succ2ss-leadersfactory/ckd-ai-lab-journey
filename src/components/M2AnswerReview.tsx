@@ -1,3 +1,5 @@
+import "./m2AnswerReview.css";
+
 type M2AnswerReviewProps = {
   selectedRiskIds: string[];
   onToggleRisk: (riskId: string) => void;
@@ -6,28 +8,28 @@ type M2AnswerReviewProps = {
 export const m2AnswerRisks = [
   {
     id: "specificity-gap",
-    title: "구체성 보완 필요",
-    description: "누가, 무엇을, 언제, 어떻게 할지가 충분히 보이나요? 부족하면 체크합니다.",
+    title: "구체성",
+    description: "누가, 무엇을, 언제, 어떻게 할지가 충분히 보이나요?",
   },
   {
     id: "context-gap",
-    title: "맥락 반영 보완 필요",
-    description: "우리 팀 상황과 팀원의 반응이 충분히 반영되어 있나요? 부족하면 체크합니다.",
+    title: "맥락 반영",
+    description: "우리 팀 상황과 팀원의 반응이 충분히 반영되어 있나요?",
   },
   {
     id: "actionability-gap",
-    title: "실행 가능성 보완 필요",
-    description: "다음 1~2주 안에 실제로 해볼 수 있는 수준인가요? 부족하면 체크합니다.",
+    title: "실행 가능성",
+    description: "다음 1~2주 안에 실제로 해볼 수 있는 수준인가요?",
   },
   {
     id: "leader-language-gap",
-    title: "리더 언어 보완 필요",
-    description: "내가 팀장으로서 실제로 말할 수 있는 표현인가요? 어색하면 체크합니다.",
+    title: "리더 언어",
+    description: "내가 팀장으로서 실제로 말할 수 있는 표현인가요?",
   },
   {
     id: "fact-check-gap",
-    title: "사실 검증 필요",
-    description: "확인할 수 없는 단정이나 추측이 들어 있나요? 확인이 필요하면 체크합니다.",
+    title: "사실 검증 가능성",
+    description: "확인할 수 없는 단정이나 추측이 들어 있나요?",
   },
 ];
 
@@ -51,7 +53,7 @@ function M2AnswerReview({ selectedRiskIds, onToggleRisk }: M2AnswerReviewProps) 
           return (
             <button
               key={risk.id}
-              className={selected ? "choice-button selected" : "choice-button"}
+              className={selected ? "choice-button answer-review-card selected" : "choice-button answer-review-card"}
               onClick={() => onToggleRisk(risk.id)}
               type="button"
             >
