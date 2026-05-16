@@ -1,0 +1,36 @@
+.bottom-nav {
+  margin-top: 28px;
+  padding-top: 4px;
+}
+
+.bottom-nav-buttons {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.bottom-nav .primary-button,
+.bottom-nav .secondary-button {
+  margin-top: 0;
+  min-height: 52px;
+}
+
+@media (max-width: 640px) {
+  .bottom-nav {
+    margin-top: 24px;
+    padding-bottom: 4px;
+  }
+
+  .bottom-nav-buttons {
+    grid-template-columns: 1fr 1.7fr;
+    gap: 10px;
+  }
+
+  .bottom-nav .primary-button,
+  .bottom-nav .secondary-button {
+    min-height: 50px;
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+}
