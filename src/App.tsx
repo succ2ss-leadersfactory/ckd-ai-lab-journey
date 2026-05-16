@@ -112,8 +112,9 @@ function App() {
     step === 17 ||
     (step === 18 && m2AnonymizedContext.trim().length > 0) ||
     step === 19 ||
-    (step === 20 && true) ||
-    (step === 21 && m2AiResponse.trim().length > 0)
+    step === 20 ||
+    (step === 21 && m2AiResponse.trim().length > 0) ||
+    step === 22
   );
 
   return (
@@ -143,7 +144,8 @@ function App() {
         {step === 19 && (<><h2>익명화 상황 입력 완료</h2><p className="subtitle">익명화된 상황 설명이 입력되었습니다. 다음 단계에서는 이 내용을 바탕으로 AI 프롬프트 생성 화면을 구현합니다.</p><div className="status-box"><strong>입력한 상황 설명</strong><span>{m2AnonymizedContext}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4D. AI 프롬프트 생성 화면</span></div></>)}
         {step === 20 && <M2PromptGenerator issue={fullLabIssue} selectedReasonIds={selectedM2ReasonIds} anonymizedContext={m2AnonymizedContext} />}
         {step === 21 && <M2AiResponsePaste value={m2AiResponse} onChange={setM2AiResponse} />}
-        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 21} onClick={() => setStep((prev) => Math.min(21, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
+        {step === 22 && (<><h2>AI 답변 입력 완료</h2><p className="subtitle">AI 답변이 입력되었습니다. 다음 단계에서는 이 답변을 보안성, 현장성, 성과 책임, 실행 가능성 관점에서 감별합니다.</p><div className="status-box"><strong>입력된 답변 길이</strong><span>{m2AiResponse.trim().length}자</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4F. AI 답변 감별 화면</span></div></>)}
+        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 22} onClick={() => setStep((prev) => Math.min(22, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
   );
