@@ -1,3 +1,4 @@
+import "./bottomNav.css";
 import StepNotice from "./StepNotice";
 
 type BottomNavProps = {
