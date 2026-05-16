@@ -107,7 +107,8 @@ function App() {
     step === 15 ||
     (step === 16 && selectedM2ReasonIds.length > 0) ||
     step === 17 ||
-    (step === 18 && m2AnonymizedContext.trim().length > 0)
+    (step === 18 && m2AnonymizedContext.trim().length > 0) ||
+    step === 19
   );
 
   return (
@@ -134,7 +135,8 @@ function App() {
         {step === 16 && <M2ReasonHypothesis selectedReasonIds={selectedM2ReasonIds} onToggleReason={toggleM2Reason} />}
         {step === 17 && (<><h2>원인 가설 선택 완료</h2><p className="subtitle">선택한 원인 가설을 바탕으로 다음 단계에서는 실제 고객명·제품명·팀원 실명 없이 익명화된 상황 설명을 작성합니다.</p><div className="status-box"><strong>선택한 원인 가설 수</strong><span>{selectedM2ReasonIds.length}개</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4C. 익명화 상황 입력 화면</span></div></>)}
         {step === 18 && <M2AnonymizedContext issue={fullLabIssue} value={m2AnonymizedContext} onChange={setM2AnonymizedContext} />}
-        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 18} onClick={() => setStep((prev) => Math.min(18, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
+        {step === 19 && (<><h2>익명화 상황 입력 완료</h2><p className="subtitle">익명화된 상황 설명이 입력되었습니다. 다음 단계에서는 이 내용을 바탕으로 AI 프롬프트 생성 화면을 구현합니다.</p><div className="status-box"><strong>입력한 상황 설명</strong><span>{m2AnonymizedContext}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4D. AI 프롬프트 생성 화면</span></div></>)}
+        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 19} onClick={() => setStep((prev) => Math.min(19, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
   );
