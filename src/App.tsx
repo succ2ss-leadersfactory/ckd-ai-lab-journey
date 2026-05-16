@@ -8,6 +8,7 @@ import M2AnswerReview from "./components/M2AnswerReview";
 import M2FieldRewrite from "./components/M2FieldRewrite";
 import M2ActionCommitment from "./components/M2ActionCommitment";
 import M2LiteLabIntro from "./components/M2LiteLabIntro";
+import M2LitePromptGenerator from "./components/M2LitePromptGenerator";
 import M2LiteLabPractice from "./components/M2LiteLabPractice";
 import { m2Issues } from "./data/m2Data";
 
@@ -137,7 +138,8 @@ function App() {
     (step === 27 && actionCommitmentReady) ||
     step === 28 ||
     step === 29 ||
-    (step === 30 && liteLabReady)
+    step === 30 ||
+    (step === 31 && liteLabReady)
   );
 
   return (
@@ -175,9 +177,10 @@ function App() {
         {step === 27 && <M2ActionCommitment value={m2ActionCommitment} onChange={setM2ActionCommitment} />}
         {step === 28 && (<><h2>M2 Full Lab 완료</h2><p className="subtitle">성과관리 Full Lab이 완료되었습니다. 성과 문제를 원인 가설로 보고, AI 답변을 감별하고, 현장 언어와 2주 행동 약속으로 전환했습니다.</p><div className="status-box"><strong>팀원이 할 행동</strong><span>{m2ActionCommitment.memberAction}</span></div><div className="status-box"><strong>팀장 지원</strong><span>{m2ActionCommitment.leaderSupport}</span></div><div className="status-box"><strong>중간 점검 시점</strong><span>{m2ActionCommitment.checkInTiming}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2 Lite Lab 시작 화면</span></div></>)}
         {step === 29 && <M2LiteLabIntro issue={liteLabIssue} />}
-        {step === 30 && <M2LiteLabPractice value={m2LiteLabPractice} onChange={setM2LiteLabPractice} />}
-        {step === 31 && (<><h2>M2 성과관리 Lab 완료</h2><p className="subtitle">성과관리 Full Lab과 Lite Lab을 모두 완료했습니다. 이제 성과 문제를 단정하지 않고, 원인 가설·현장 언어·행동 약속으로 전환하는 흐름을 경험했습니다.</p><div className="status-box"><strong>Lite Lab 질문 1</strong><span>{m2LiteLabPractice.question1}</span></div><div className="status-box"><strong>Lite Lab 행동 약속</strong><span>{m2LiteLabPractice.actionPromise}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M3 업무관리 Alignment Lab</span></div></>)}
-        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 31} onClick={() => setStep((prev) => Math.min(31, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
+        {step === 30 && <M2LitePromptGenerator issue={liteLabIssue} />}
+        {step === 31 && <M2LiteLabPractice value={m2LiteLabPractice} onChange={setM2LiteLabPractice} />}
+        {step === 32 && (<><h2>M2 성과관리 Lab 완료</h2><p className="subtitle">성과관리 Full Lab과 Lite Lab을 모두 완료했습니다. 이제 성과 문제를 단정하지 않고, 원인 가설·현장 언어·행동 약속으로 전환하는 흐름을 경험했습니다.</p><div className="status-box"><strong>Lite Lab 질문 1</strong><span>{m2LiteLabPractice.question1}</span></div><div className="status-box"><strong>Lite Lab 행동 약속</strong><span>{m2LiteLabPractice.actionPromise}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M3 업무관리 Alignment Lab</span></div></>)}
+        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 32} onClick={() => setStep((prev) => Math.min(32, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
   );
