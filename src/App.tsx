@@ -342,7 +342,7 @@ function App() {
         {step === 12 && (
           <>
             <h2>성과관리 이슈 스캔</h2>
-            <p className="subtitle">5개 이슈를 빠르게 훑고, 우리 팀 관련도·리더 판단 난이도·AI 도움받고 싶은 지점을 체크합니다. 이 단계는 정답 찾기가 아니라 팀의 실제 고민을 찾는 과정입니다.</p>
+            <p className="subtitle">5개 이슈를 빠르게 훑고, 우리 팀 관련도·리더 판단 난이도·AI 도움받고 싶은 지점을 체크합니다. AI 도움받고 싶은 지점은 복수 선택할 수 있습니다.</p>
             <div className="scan-list">
               {m2Issues.map((issue, index) => (
                 <article className="scan-card" key={issue.code}>
@@ -371,7 +371,7 @@ function App() {
                     </div>
                   </div>
                   <div className="pulse-row help-row">
-                    <span>AI 도움받고 싶은 지점</span>
+                    <span>AI 도움받고 싶은 지점 (복수 선택 가능)</span>
                     <div className="chip-row wrap-chip-row">
                       {issue.helpOptions.map((option) => (
                         <button key={option} className={m2Scan[index].helpAreas.includes(option) ? "chip-button selected" : "chip-button"} onClick={() => toggleM2HelpArea(index, option)} type="button">{option}</button>
