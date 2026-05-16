@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 const roles = [
   "상황 정리자",
@@ -78,6 +78,19 @@ function App() {
     promptCondition.trim() &&
     promptFormat.trim();
 
+  const finalPrompt = useMemo(() => {
+    return `${promptRole}\n\n[상황]\n${promptSituation}\n\n[요청]\n${promptRequest}\n\n[조건]\n${promptCondition}\n\n[출력 형식]\n${promptFormat}`;
+  }, [promptRole, promptSituation, promptRequest, promptCondition, promptFormat]);
+
+  const copyPrompt = async () => {
+    try {
+      await navigator.clipboard.writeText(finalPrompt);
+      alert("프롬프트가 복사되었습니다.");
+    } catch {
+      alert("복사가 되지 않았습니다. 프롬프트를 직접 선택해서 복사해주세요.");
+    }
+  };
+
   const canNext =
     step === 0 ||
     (step === 1 && sessionCode.trim()) ||
@@ -88,7 +101,8 @@ function App() {
     step === 6 ||
     (step === 7 && allCardsAnswered) ||
     step === 8 ||
-    (step === 9 && promptReady);
+    (step === 9 && promptReady) ||
+    step === 10;
 
   return (
     <main className="app-shell">
@@ -336,13 +350,17 @@ function App() {
 
         {step === 10 && (
           <>
-            <h2>AI 질문문 작성 완료</h2>
+            <h2>M1 최종 프롬프트</h2>
             <p className="subtitle">
-              다음 단계에서는 작성한 내용을 하나의 최종 프롬프트로 미리 보고 복사할 수 있게 합니다.
+              보안 기준을 반영한 질문문입니다. 외부 AI 도구에 복사해 사용할 수 있습니다.
             </p>
+            <pre className="prompt-preview">{finalPrompt}</pre>
+            <button className="primary-button standalone" onClick={copyPrompt} type="button">
+              프롬프트 복사
+            </button>
             <div className="status-box">
-              <strong>다음 개발 단계</strong>
-              <span>M1-4A. 최종 프롬프트 미리보기와 복사 기능</span>
+              <strong>M1 완료</strong>
+              <span>다음 개발 단계에서는 M2 성과관리 Decision Lab을 구현합니다.</span>
             </div>
           </>
         )}
