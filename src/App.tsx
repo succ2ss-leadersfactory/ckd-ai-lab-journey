@@ -63,6 +63,8 @@ function App() {
 
   const allChecked = checked.every(Boolean);
   const currentCard = securityCards[cardIndex];
+  const answeredCount = cardAnswers.filter(Boolean).length;
+  const allCardsAnswered = answeredCount === securityCards.length;
 
   const canNext =
     step === 0 ||
@@ -71,7 +73,8 @@ function App() {
     (step === 3 && selectedRole) ||
     (step === 4 && allChecked) ||
     step === 5 ||
-    step === 6;
+    step === 6 ||
+    (step === 7 && allCardsAnswered);
 
   return (
     <main className="app-shell">
@@ -216,7 +219,7 @@ function App() {
           <>
             <h2>AI 보안 기준 카드 분류</h2>
             <p className="subtitle">
-              아래 문장을 AI에 입력해도 되는지 판단해주세요.
+              아래 문장을 AI에 입력해도 되는지 판단해주세요. 5개 카드를 모두 분류해야 다음 단계로 이동할 수 있습니다.
             </p>
             <div className="quiz-card">
               <strong>카드 {cardIndex + 1} / {securityCards.length}</strong>
@@ -248,6 +251,12 @@ function App() {
                 <span>{currentCard.feedback}</span>
               </div>
             )}
+            <div className="status-box compact-status">
+              <strong>분류 진행률</strong>
+              <span>{answeredCount} / {securityCards.length}개 완료</span>
+              {!allCardsAnswered && <span>아직 분류하지 않은 카드가 있습니다.</span>}
+              {allCardsAnswered && <span>AI 보안 기준 카드 분류를 완료했습니다.</span>}
+            </div>
             <div className="nav-row inner-nav">
               <button
                 className="secondary-button"
@@ -269,6 +278,19 @@ function App() {
           </>
         )}
 
+        {step === 8 && (
+          <>
+            <h2>AI 보안 기준 분류 완료</h2>
+            <p className="subtitle">
+              이제 다음 단계에서는 역할, 상황, 요청, 조건, 출력 형식을 갖춘 좋은 AI 질문문을 작성합니다.
+            </p>
+            <div className="status-box">
+              <strong>다음 산출물</strong>
+              <span>보안 기준을 반영한 AI 질문문 초안</span>
+            </div>
+          </>
+        )}
+
         <div className="nav-row">
           <button
             className="secondary-button"
@@ -280,8 +302,8 @@ function App() {
           </button>
           <button
             className="primary-button"
-            disabled={!canNext || step === 7}
-            onClick={() => setStep((prev) => Math.min(7, prev + 1))}
+            disabled={!canNext || step === 8}
+            onClick={() => setStep((prev) => Math.min(8, prev + 1))}
             type="button"
           >
             {step === 0 ? "Lab Journey 시작하기" : "다음"}
