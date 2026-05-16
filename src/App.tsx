@@ -103,6 +103,7 @@ function App() {
   const [m2Scan, setM2Scan] = useState<M2ScanItem[]>(
     m2Issues.map(() => ({ relevance: "", difficulty: "", helpAreas: [] }))
   );
+  const [selectedM2IssueCodes, setSelectedM2IssueCodes] = useState<string[]>([]);
 
   const allChecked = checked.every(Boolean);
   const currentCard = securityCards[cardIndex];
@@ -110,6 +111,7 @@ function App() {
   const allCardsAnswered = answeredCount === securityCards.length;
   const m2ScanCompleteCount = m2Scan.filter((item) => item.relevance && item.difficulty && item.helpAreas.length > 0).length;
   const allM2ScanComplete = m2ScanCompleteCount === m2Issues.length;
+  const selectedM2Issues = m2Issues.filter((issue) => selectedM2IssueCodes.includes(issue.code));
 
   const promptReady = Boolean(
     promptRole.trim() &&
@@ -150,6 +152,19 @@ function App() {
     setM2Scan(next);
   };
 
+  const toggleM2IssueSelection = (code: string) => {
+    setSelectedM2IssueCodes((current) => {
+      if (current.includes(code)) {
+        return current.filter((item) => item !== code);
+      }
+      if (current.length >= 2) {
+        alert("핵심 상황은 2개까지만 선택할 수 있습니다.");
+        return current;
+      }
+      return [...current, code];
+    });
+  };
+
   const canNext =
     step === 0 ||
     (step === 1 && sessionCode.trim()) ||
@@ -163,7 +178,8 @@ function App() {
     (step === 9 && promptReady) ||
     step === 10 ||
     step === 11 ||
-    (step === 12 && allM2ScanComplete);
+    (step === 12 && allM2ScanComplete) ||
+    (step === 13 && selectedM2IssueCodes.length === 2);
 
   return (
     <main className="app-shell">
@@ -392,15 +408,53 @@ function App() {
 
         {step === 13 && (
           <>
-            <h2>성과관리 이슈 스캔 완료</h2>
-            <p className="subtitle">다음 개발 단계에서는 스캔 결과를 보고 핵심 상황 2개를 선택하는 화면을 구현합니다.</p>
-            <div className="status-box"><strong>다음 개발 단계</strong><span>M2-3. 핵심 상황 2개 선택 화면</span></div>
+            <h2>핵심 상황 2개 선택</h2>
+            <p className="subtitle">스캔한 성과관리 이슈 중 이번 실습에서 다룰 핵심 상황 2개를 선택해주세요. 하나는 Full Lab으로 깊게 다루고, 하나는 Lite Lab으로 빠르게 적용합니다.</p>
+            <div className="scan-list">
+              {m2Issues.map((issue) => {
+                const selected = selectedM2IssueCodes.includes(issue.code);
+                return (
+                  <button key={issue.code} className={selected ? "choice-button selected" : "choice-button"} onClick={() => toggleM2IssueSelection(issue.code)} type="button">
+                    <strong>{issue.code}. {issue.title}</strong>
+                    <span>{issue.situation}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="status-box compact-status">
+              <strong>선택 진행률</strong>
+              <span>{selectedM2IssueCodes.length} / 2개 선택</span>
+              {selectedM2IssueCodes.length < 2 && <span>핵심 상황을 2개 선택해야 다음 단계로 이동할 수 있습니다.</span>}
+              {selectedM2IssueCodes.length === 2 && <span>핵심 상황 2개 선택이 완료되었습니다.</span>}
+            </div>
+          </>
+        )}
+
+        {step === 14 && (
+          <>
+            <h2>핵심 상황 선택 완료</h2>
+            <p className="subtitle">선택한 2개 상황을 확인해주세요. 다음 개발 단계에서는 첫 번째 상황을 Full Lab으로 깊게 다루는 흐름을 구현합니다.</p>
+            <div className="scan-list">
+              {selectedM2Issues.map((issue, index) => (
+                <article className="scan-card" key={issue.code}>
+                  <div className="scan-card-header">
+                    <b>{index === 0 ? "Full" : "Lite"}</b>
+                    <div>
+                      <strong>{issue.code}. {issue.title}</strong>
+                      <p>{issue.situation}</p>
+                      <span>판단 초점: {issue.focus}</span>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className="status-box"><strong>다음 개발 단계</strong><span>M2-4. 첫 번째 상황 Full Lab</span></div>
           </>
         )}
 
         <div className="nav-row">
           <button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button>
-          <button className="primary-button" disabled={!canNext || step === 13} onClick={() => setStep((prev) => Math.min(13, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button>
+          <button className="primary-button" disabled={!canNext || step === 14} onClick={() => setStep((prev) => Math.min(14, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button>
         </div>
       </section>
     </main>
