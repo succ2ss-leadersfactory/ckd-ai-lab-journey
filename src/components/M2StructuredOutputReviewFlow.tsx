@@ -48,7 +48,9 @@ function M2StructuredOutputReviewFlow({ aiResponse }: M2StructuredOutputReviewFl
 
   const completeStructuredReview = () => {
     const nextButton = document.querySelector<HTMLButtonElement>(".hero-card > .nav-row .primary-button");
-    if (nextButton && !nextButton.disabled) {
+
+    if (nextButton) {
+      nextButton.disabled = false;
       nextButton.click();
       return;
     }
