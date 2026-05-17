@@ -8,6 +8,15 @@
   <body>
     <div id="root"></div>
     <script>
+      function hideDeveloperNotes() {
+        document.querySelectorAll(".status-box").forEach(function (box) {
+          var text = box.textContent || "";
+          if (text.indexOf("다음 개발 단계") !== -1) {
+            box.style.display = "none";
+          }
+        });
+      }
+
       document.addEventListener("click", function (event) {
         const target = event.target instanceof Element ? event.target : null;
         const navigationButton = target?.closest(".nav-row button, .bottom-nav button");
@@ -17,7 +26,14 @@
           window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
           document.documentElement.scrollTop = 0;
           document.body.scrollTop = 0;
+          hideDeveloperNotes();
         }, 80);
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        hideDeveloperNotes();
+        var observer = new MutationObserver(hideDeveloperNotes);
+        observer.observe(document.body, { childList: true, subtree: true });
       });
     </script>
     <script type="module" src="/src/main.tsx"></script>
