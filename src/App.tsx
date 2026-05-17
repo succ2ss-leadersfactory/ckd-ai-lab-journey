@@ -269,7 +269,14 @@ step === 31 ||
   <span>{m2LiteLabPractice.actionPromise}</span>
 </div>
           
-          <div className="status-box"><strong>다음 개발 단계</strong><span>M3 업무관리 Alignment Lab</span></div></>)}
+          <div className="status-box"><strong>다음 개발 단계</strong><span>M2 성과관리 Lab 파일럿 완료
+
+확인해주실 피드백
+1. 성과관리 상황이 영업팀장 현장과 맞는가?
+2. 웹앱 흐름이 자연스러운가?
+3. AI 활용 방식이 부담스럽지 않은가?
+4. 보안·준법 관점에서 우려되는 부분은 없는가?
+5. 실제 교육에서 활용 가능해 보이는가?</span></div></>)}
         <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={goPrev} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 33} onClick={goNext} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
