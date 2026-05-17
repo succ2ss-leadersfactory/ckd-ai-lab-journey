@@ -46,9 +46,25 @@ function M2StructuredOutputReviewFlow({ aiResponse }: M2StructuredOutputReviewFl
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const completeStructuredReview = () => {
+    const nextButton = document.querySelector<HTMLButtonElement>(".hero-card > .nav-row .primary-button");
+    if (nextButton && !nextButton.disabled) {
+      nextButton.click();
+      return;
+    }
+
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    alert("결과물 정리는 완료되었습니다. 화면 하단의 다음 버튼으로 이동해주세요.");
+  };
+
   const goNextSection = () => {
     if (!currentSectionComplete) {
       alert("현재 결과물의 5가지 기준을 모두 체크한 뒤 다음 결과물로 이동해주세요.");
+      return;
+    }
+
+    if (isLastSection) {
+      completeStructuredReview();
       return;
     }
 
@@ -76,18 +92,18 @@ function M2StructuredOutputReviewFlow({ aiResponse }: M2StructuredOutputReviewFl
         </button>
         <button
           className="secondary-button"
-          disabled={isLastSection}
+          disabled={isLastSection ? !currentSectionComplete : false}
           onClick={goNextSection}
           type="button"
         >
-          다음 결과물
+          {isLastSection ? "결과물 정리 완료" : "다음 결과물"}
         </button>
       </div>
 
       {isLastSection && currentSectionComplete && (
         <div className="status-box compact-status">
           <strong>결과물 정리 완료</strong>
-          <span>6개 결과물의 5가지 기준 체크가 완료되었습니다. 다음 단계에서 현장 표현으로 다듬습니다.</span>
+          <span>6개 결과물의 5가지 기준 체크가 완료되었습니다. 결과물 정리 완료 버튼을 눌러 현장 표현으로 다듬기 단계로 이동하세요.</span>
         </div>
       )}
     </>
