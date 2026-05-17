@@ -40,6 +40,14 @@ export const m2Reasons: M2Reason[] = [
   },
 ];
 
+const recommendedReasonMap: Record<string, string[]> = {
+  A: ["motivation-emotion", "leader-support", "priority"],
+  B: ["activity-quality", "priority", "leader-support"],
+  C: ["motivation-emotion", "leader-support", "capability"],
+  D: ["motivation-emotion", "activity-quality", "leader-support"],
+  E: ["priority", "motivation-emotion", "leader-support"],
+};
+
 type M2ReasonHypothesisProps = {
   issue?: M2Issue;
   selectedReasonIds: string[];
@@ -47,6 +55,9 @@ type M2ReasonHypothesisProps = {
 };
 
 function M2ReasonHypothesis({ issue, selectedReasonIds, onToggleReason }: M2ReasonHypothesisProps) {
+  const recommendedReasonIds = issue ? recommendedReasonMap[issue.code] ?? [] : [];
+  const recommendedReasons = m2Reasons.filter((reason) => recommendedReasonIds.includes(reason.id));
+
   return (
     <>
       <h2>성과 원인 가설 선택</h2>
@@ -67,9 +78,18 @@ function M2ReasonHypothesis({ issue, selectedReasonIds, onToggleReason }: M2Reas
         </article>
       )}
 
+      {recommendedReasons.length > 0 && (
+        <div className="status-box compact-status">
+          <strong>추천 원인 가설</strong>
+          <span>{recommendedReasons.map((reason) => reason.title).join(" · ")}</span>
+          <span>추천 가설은 생각의 출발점입니다. 필요하면 다른 가설도 함께 선택하세요.</span>
+        </div>
+      )}
+
       <div className="scan-list">
         {m2Reasons.map((reason) => {
           const selected = selectedReasonIds.includes(reason.id);
+          const recommended = recommendedReasonIds.includes(reason.id);
           return (
             <button
               key={reason.id}
@@ -77,7 +97,9 @@ function M2ReasonHypothesis({ issue, selectedReasonIds, onToggleReason }: M2Reas
               onClick={() => onToggleReason(reason.id)}
               type="button"
             >
-              <strong className="reason-title">{reason.title}</strong>
+              <strong className="reason-title">
+                {reason.title} {recommended && <span className="inline-badge">추천</span>}
+              </strong>
               <span className="reason-question">{reason.question}</span>
             </button>
           );
