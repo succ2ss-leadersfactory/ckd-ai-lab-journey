@@ -12,7 +12,7 @@ import M2ActionCommitment from "./components/M2ActionCommitment";
 import M2LiteLabIntro from "./components/M2LiteLabIntro";
 import M2LitePromptGenerator from "./components/M2LitePromptGenerator";
 import M2LiteLabPractice from "./components/M2LiteLabPractice";
-import { m2Issues } from "./data/m2Data";
+import { m2Issues, type M2Issue } from "./data/m2Data";
 
 const roles = ["상황 정리자", "AI 질문자", "답변 검토자", "현장 언어 수정자", "공유자"];
 const securityItems = [
@@ -32,7 +32,10 @@ const securityCards = [
 ];
 const cardOptions = ["입력 가능", "익명화 후 가능", "입력 금지", "내부 기준 확인 필요"];
 const scanLevels = ["낮음", "중간", "높음"];
+
 type M2ScanItem = { relevance: string; difficulty: string; helpAreas: string[] };
+type M2ActionCommitmentState = { memberAction: string; leaderSupport: string; checkInTiming: string };
+type M2LiteLabPracticeState = { question1: string; question2: string; question3: string; actionPromise: string; leaderSupport: string };
 
 function App() {
   const [step, setStep] = useState(0);
@@ -55,8 +58,8 @@ function App() {
   const [m2AiResponse, setM2AiResponse] = useState("");
   const [selectedM2RiskIds, setSelectedM2RiskIds] = useState<string[]>([]);
   const [m2FieldRewrite, setM2FieldRewrite] = useState("");
-  const [m2ActionCommitment, setM2ActionCommitment] = useState({ memberAction: "", leaderSupport: "", checkInTiming: "" });
-  const [m2LiteLabPractice, setM2LiteLabPractice] = useState({ question1: "", question2: "", question3: "", actionPromise: "", leaderSupport: "" });
+  const [m2ActionCommitment, setM2ActionCommitment] = useState<M2ActionCommitmentState>({ memberAction: "", leaderSupport: "", checkInTiming: "" });
+  const [m2LiteLabPractice, setM2LiteLabPractice] = useState<M2LiteLabPracticeState>({ question1: "", question2: "", question3: "", actionPromise: "", leaderSupport: "" });
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -68,7 +71,9 @@ function App() {
   const allCardsAnswered = answeredCount === securityCards.length;
   const m2ScanCompleteCount = m2Scan.filter((item) => item.relevance && item.difficulty && item.helpAreas.length > 0).length;
   const allM2ScanComplete = m2ScanCompleteCount === m2Issues.length;
-  const selectedM2Issues = m2Issues.filter((issue) => selectedM2IssueCodes.includes(issue.code));
+  const selectedM2Issues = selectedM2IssueCodes
+    .map((code) => m2Issues.find((issue) => issue.code === code))
+    .filter((issue): issue is M2Issue => Boolean(issue));
   const fullLabIssue = selectedM2Issues[0];
   const liteLabIssue = selectedM2Issues[1];
   const promptReady = Boolean(promptRole.trim() && promptSituation.trim() && promptRequest.trim() && promptCondition.trim() && promptFormat.trim());
@@ -76,15 +81,22 @@ function App() {
   const liteLabReady = Boolean(m2LiteLabPractice.question1.trim() && m2LiteLabPractice.question2.trim() && m2LiteLabPractice.question3.trim() && m2LiteLabPractice.actionPromise.trim() && m2LiteLabPractice.leaderSupport.trim());
   const finalPrompt = useMemo(() => `${promptRole}\n\n[상황]\n${promptSituation}\n\n[요청]\n${promptRequest}\n\n[조건]\n${promptCondition}\n\n[출력 형식]\n${promptFormat}`, [promptRole, promptSituation, promptRequest, promptCondition, promptFormat]);
 
+  const goPrev = () => setStep((prev) => Math.max(0, prev - 1));
+  const goNext = () => setStep((prev) => Math.min(32, prev + 1));
+
   const copyPrompt = async () => {
     try { await navigator.clipboard.writeText(finalPrompt); alert("프롬프트가 복사되었습니다."); }
     catch { alert("복사가 되지 않았습니다. 프롬프트를 직접 선택해서 복사해주세요."); }
   };
+
   const updateM2Scan = (index: number, key: "relevance" | "difficulty", value: string) => {
-    const next = [...m2Scan]; next[index] = { ...next[index], [key]: value }; setM2Scan(next);
+    const next = [...m2Scan];
+    next[index] = { ...next[index], [key]: value };
+    setM2Scan(next);
   };
   const toggleM2HelpArea = (index: number, value: string) => {
-    const next = [...m2Scan]; const current = next[index].helpAreas;
+    const next = [...m2Scan];
+    const current = next[index].helpAreas;
     next[index] = { ...next[index], helpAreas: current.includes(value) ? current.filter((item) => item !== value) : [...current, value] };
     setM2Scan(next);
   };
@@ -126,8 +138,6 @@ function App() {
     step === 28 || step === 29 || step === 30 ||
     (step === 31 && liteLabReady)
   );
-  const goPrev = () => setStep((prev) => Math.max(0, prev - 1));
-  const goNext = () => setStep((prev) => Math.min(32, prev + 1));
 
   return (
     <main className="app-shell">
@@ -162,11 +172,11 @@ function App() {
         {step === 25 && <M2FieldRewrite value={m2FieldRewrite} onChange={setM2FieldRewrite} />}
         {step === 26 && (<><h2>현장 표현 다듬기 완료</h2><p className="subtitle">AI 답변을 실제 팀장이 말할 수 있는 현장 표현으로 다듬었습니다. 다음 단계에서는 2주 실행 계획을 작성합니다.</p><div className="status-box"><strong>다듬은 문장</strong><span>{m2FieldRewrite}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4H. 2주 실행 계획 화면</span></div></>)}
         {step === 27 && <M2ActionCommitment value={m2ActionCommitment} onChange={setM2ActionCommitment} />}
-        {step === 28 && (<><h2>M2 Full Lab 완료</h2><p className="subtitle">성과관리 Full Lab이 완료되었습니다. 성과 문제를 원인 가설로 보고, AI 답변을 확인한 뒤, 현장 표현과 2주 실행 계획으로 전환했습니다.</p><div className="status-box"><strong>팀원의 2주 실행 행동</strong><span>{m2ActionCommitment.memberAction}</span></div><div className="status-box"><strong>팀장의 지원</strong><span>{m2ActionCommitment.leaderSupport}</span></div><div className="status-box"><strong>중간 체크 시점</strong><span>{m2ActionCommitment.checkInTiming}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2 Lite Lab 시작 화면</span></div></>)}
+        {step === 28 && (<><h2>M2 Full Lab 완료</h2><p className="subtitle">성과관리 Full Lab이 완료되었습니다. 성과 문제를 원인 가설로 보고, AI 답변을 확인한 뒤, 현장 표현과 2주 실행 계획으로 전환했습니다.</p><div className="status-box"><strong>팀원의 2주 실행 행동</strong><span>{m2ActionCommitment.memberAction}</span></div><div className="status-box"><strong>팀장의 지원</strong><span>{m2ActionCommitment.leaderSupport}</span></div><div className="status-box"><strong>중간 체크 시점</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2 Lite Lab 시작 화면</span></div></>)}
         {step === 29 && <M2LiteLabIntro issue={liteLabIssue} />}
         {step === 30 && <M2LitePromptGenerator issue={liteLabIssue} />}
         {step === 31 && <M2LiteLabPractice value={m2LiteLabPractice} onChange={setM2LiteLabPractice} />}
-        {step === 32 && (<><h2>M2 성과관리 Lab 완료</h2><p className="subtitle">성과관리 Full Lab과 Lite Lab을 모두 완료했습니다. 이제 성과 문제를 단정하지 않고, 원인 가설·현장 표현·실행 계획으로 전환하는 흐름을 경험했습니다.</p><div className="status-box"><strong>Lite Lab 질문 1</strong><span>{m2LiteLabPractice.question1}</span></div><div className="status-box"><strong>Lite Lab 2주 실행 계획</strong><span>{m2LiteLabPractice.actionPromise}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M3 업무관리 Alignment Lab</span></div></>)}
+        {step === 32 && (<><h2>M2 성과관리 Lab 완료</h2><p className="subtitle">성과관리 Full Lab과 Lite Lab을 모두 완료했습니다. 이제 성과 문제를 단정하지 않고, 원인 가설·현장 표현·실행 계획으로 전환하는 흐름을 경험했습니다.</p><div className="status-box"><strong>Lite Lab 질문 1</strong><span>{m2LiteLabPractice.question1}</span></div><div className="status-box"><strong>Lite Lab 2주 실행 계획</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M3 업무관리 Alignment Lab</span></div></>)}
         <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={goPrev} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 32} onClick={goNext} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
