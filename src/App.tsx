@@ -6,6 +6,7 @@ import M2ReasonHypothesis from "./components/M2ReasonHypothesis";
 import M2AnonymizedContext from "./components/M2AnonymizedContext";
 import M2PromptGenerator from "./components/M2PromptGenerator";
 import M2AiResponsePaste from "./components/M2AiResponsePaste";
+import M2StructuredOutputReviewFlow from "./components/M2StructuredOutputReviewFlow";
 import M2AnswerReview from "./components/M2AnswerReview";
 import M2FieldRewrite from "./components/M2FieldRewrite";
 import M2ActionCommitment from "./components/M2ActionCommitment";
@@ -166,7 +167,7 @@ function App() {
         {step === 19 && (<><h2>익명화 상황 입력 완료</h2><p className="subtitle">익명화된 상황 설명이 입력되었습니다. 다음 단계에서는 이 내용을 바탕으로 AI 프롬프트 생성 화면을 구현합니다.</p><div className="status-box"><strong>입력한 상황 설명</strong><span>{m2AnonymizedContext}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4D. AI 프롬프트 생성 화면</span></div></>)}
         {step === 20 && <M2PromptGenerator issue={fullLabIssue} selectedReasonIds={selectedM2ReasonIds} anonymizedContext={m2AnonymizedContext} />}
         {step === 21 && <M2AiResponsePaste value={m2AiResponse} onChange={setM2AiResponse} />}
-        {step === 22 && (<><h2>AI 답변 입력 완료</h2><p className="subtitle">AI 답변이 입력되었습니다. 다음 단계에서는 이 답변을 보안성, 현장성, 성과 책임, 실행 가능성 관점에서 감별합니다.</p><div className="status-box"><strong>입력된 답변 길이</strong><span>{m2AiResponse.trim().length}자</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4F. AI 답변 감별 화면</span></div></>)}
+        {step === 22 && <M2StructuredOutputReviewFlow aiResponse={m2AiResponse} />
         {step === 23 && <M2AnswerReview selectedRiskIds={selectedM2RiskIds} onToggleRisk={toggleM2Risk} />}
         {step === 24 && (<><h2>AI 답변 감별 완료</h2><p className="subtitle">AI 답변에서 보완할 지점을 확인했습니다. 다음 단계에서는 이 결과를 바탕으로 실제 팀장이 말할 수 있는 현장 표현으로 다듬습니다.</p><div className="status-box"><strong>선택한 보완 지점 수</strong><span>{selectedM2RiskIds.length}개</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4G. 현장 표현으로 다듬기 화면</span></div></>)}
         {step === 25 && <M2FieldRewrite value={m2FieldRewrite} onChange={setM2FieldRewrite} />}
