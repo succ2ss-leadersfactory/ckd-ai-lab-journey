@@ -54,8 +54,20 @@ type M2ReasonHypothesisProps = {
   onToggleReason: (reasonId: string) => void;
 };
 
+function getStoredFullLabIssue() {
+  if (typeof window === "undefined") return undefined;
+
+  try {
+    const stored = window.sessionStorage.getItem("m2FullLabIssue");
+    return stored ? (JSON.parse(stored) as M2Issue) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function M2ReasonHypothesis({ issue, selectedReasonIds, onToggleReason }: M2ReasonHypothesisProps) {
-  const recommendedReasonIds = issue ? recommendedReasonMap[issue.code] ?? [] : [];
+  const activeIssue = issue ?? getStoredFullLabIssue();
+  const recommendedReasonIds = activeIssue ? recommendedReasonMap[activeIssue.code] ?? [] : [];
   const recommendedReasons = m2Reasons.filter((reason) => recommendedReasonIds.includes(reason.id));
 
   return (
@@ -65,21 +77,26 @@ function M2ReasonHypothesis({ issue, selectedReasonIds, onToggleReason }: M2Reas
         선택한 상황을 기준으로 가능한 원인 가설을 넓게 선택합니다. 복수 선택할 수 있습니다.
       </p>
 
-      {issue && (
+      {activeIssue ? (
         <article className="scan-card">
           <div className="scan-card-header">
             <b>Full</b>
             <div>
-              <strong>{issue.code}. {issue.title}</strong>
-              <p>{issue.situation}</p>
-              <span>판단 초점: {issue.focus}</span>
+              <strong>{activeIssue.code}. {activeIssue.title}</strong>
+              <p>{activeIssue.situation}</p>
+              <span>판단 초점: {activeIssue.focus}</span>
             </div>
           </div>
         </article>
+      ) : (
+        <div className="status-box compact-status">
+          <strong>선택 상황 확인 필요</strong>
+          <span>이전 단계에서 Full Lab으로 다룰 상황을 선택하면 추천 원인 가설이 표시됩니다.</span>
+        </div>
       )}
 
       {recommendedReasons.length > 0 && (
-        <div className="status-box compact-status">
+        <div className="status-box compact-status recommended-reason-box">
           <strong>추천 원인 가설</strong>
           <span>{recommendedReasons.map((reason) => reason.title).join(" · ")}</span>
           <span>추천 가설은 생각의 출발점입니다. 필요하면 다른 가설도 함께 선택하세요.</span>
