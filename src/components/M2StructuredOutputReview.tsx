@@ -1,4 +1,4 @@
-type StructuredOutputKey =
+export type StructuredOutputKey =
   | "opening"
   | "coachingQuestions"
   | "cautionExpressions"
@@ -108,8 +108,6 @@ type M2StructuredOutputReviewProps = {
   currentSectionIndex: number;
   selectedChecks: StructuredOutputChecks;
   onToggleCheck: (sectionKey: StructuredOutputKey, checkId: string) => void;
-  onPrevSection: () => void;
-  onNextSection: () => void;
 };
 
 function M2StructuredOutputReview({
@@ -117,14 +115,10 @@ function M2StructuredOutputReview({
   currentSectionIndex,
   selectedChecks,
   onToggleCheck,
-  onPrevSection,
-  onNextSection,
 }: M2StructuredOutputReviewProps) {
   const structured = structureM2AiResponse(aiResponse);
   const section = structuredOutputSections[currentSectionIndex];
   const sectionChecks = selectedChecks[section.key] || [];
-  const isFirst = currentSectionIndex === 0;
-  const isLast = currentSectionIndex === structuredOutputSections.length - 1;
 
   return (
     <>
@@ -161,16 +155,8 @@ function M2StructuredOutputReview({
       <div className="status-box compact-status">
         <strong>체크 진행률</strong>
         <span>{sectionChecks.length} / 5개 기준 체크</span>
-        <span>부족한 기준이 있으면 다음 현장 표현 수정 단계에서 보완합니다.</span>
-      </div>
-
-      <div className="nav-row inner-nav">
-        <button className="secondary-button" disabled={isFirst} onClick={onPrevSection} type="button">
-          이전 결과물
-        </button>
-        <button className="secondary-button" disabled={isLast} onClick={onNextSection} type="button">
-          다음 결과물
-        </button>
+        {sectionChecks.length < 5 && <span>5가지 기준을 모두 확인하면 다음 결과물로 이동할 수 있습니다.</span>}
+        {sectionChecks.length === 5 && <span>이 결과물의 5가지 기준 체크가 완료되었습니다.</span>}
       </div>
     </>
   );
