@@ -1,3 +1,4 @@
+import "./m2ReasonHypothesis.css";
 import type { M2Issue } from "../data/m2Data";
 
 export type M2Reason = {
@@ -72,12 +73,12 @@ function M2ReasonHypothesis({ issue, selectedReasonIds, onToggleReason }: M2Reas
           return (
             <button
               key={reason.id}
-              className={selected ? "choice-button selected" : "choice-button"}
+              className={selected ? "choice-button reason-card selected" : "choice-button reason-card"}
               onClick={() => onToggleReason(reason.id)}
               type="button"
             >
-              <strong>{reason.title}</strong>
-              <span>{reason.question}</span>
+              <strong className="reason-title">{reason.title}</strong>
+              <span className="reason-question">{reason.question}</span>
             </button>
           );
         })}
