@@ -1,9 +1,38 @@
+import { useState } from "react";
+import M2StructuredOutputReview, { type StructuredOutputChecks } from "./M2StructuredOutputReview";
+
 type M2AiResponsePasteProps = {
   value: string;
   onChange: (value: string) => void;
 };
 
+const initialStructuredChecks: StructuredOutputChecks = {
+  opening: [],
+  coachingQuestions: [],
+  cautionExpressions: [],
+  executionPlan: [],
+  leaderSupport: [],
+  checkQuestions: [],
+};
+
 function M2AiResponsePaste({ value, onChange }: M2AiResponsePasteProps) {
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const [selectedChecks, setSelectedChecks] = useState<StructuredOutputChecks>(initialStructuredChecks);
+
+  const handleToggleCheck = (sectionKey: keyof StructuredOutputChecks, checkId: string) => {
+    setSelectedChecks((current) => {
+      const currentChecks = current[sectionKey] || [];
+      const nextChecks = currentChecks.includes(checkId)
+        ? currentChecks.filter((item) => item !== checkId)
+        : [...currentChecks, checkId];
+
+      return {
+        ...current,
+        [sectionKey]: nextChecks,
+      };
+    });
+  };
+
   return (
     <>
       <h2>AI 답변 붙여넣기</h2>
@@ -14,7 +43,7 @@ function M2AiResponsePaste({ value, onChange }: M2AiResponsePasteProps) {
       <div className="status-box">
         <strong>운영 안내</strong>
         <span>AI 답변은 정답이 아니라 초안입니다.</span>
-        <span>다음 단계에서 보안성, 현장성, 성과 책임, 실행 가능성 관점으로 감별합니다.</span>
+        <span>붙여넣은 뒤 결과물을 6개 항목으로 나누어 확인합니다.</span>
       </div>
 
       <label className="field-group">
@@ -30,8 +59,19 @@ function M2AiResponsePaste({ value, onChange }: M2AiResponsePasteProps) {
         <strong>붙여넣기 기준</strong>
         <span>답변 전체를 붙여넣어도 됩니다.</span>
         <span>실제 고객명, 제품명, 팀원 실명 등이 포함되어 있으면 다음 단계에서 반드시 제거·수정합니다.</span>
-        <span>{value.trim() ? "AI 답변이 입력되었습니다." : "AI 답변을 붙여넣으면 다음 단계로 이동할 수 있습니다."}</span>
+        <span>{value.trim() ? "AI 답변이 입력되었습니다. 아래에서 결과물별로 확인하세요." : "AI 답변을 붙여넣으면 결과물 정리 보드가 표시됩니다."}</span>
       </div>
+
+      {value.trim() && (
+        <M2StructuredOutputReview
+          aiResponse={value}
+          currentSectionIndex={currentSectionIndex}
+          selectedChecks={selectedChecks}
+          onToggleCheck={handleToggleCheck}
+          onPrevSection={() => setCurrentSectionIndex((prev) => Math.max(0, prev - 1))}
+          onNextSection={() => setCurrentSectionIndex((prev) => Math.min(5, prev + 1))}
+        />
+      )}
     </>
   );
 }
