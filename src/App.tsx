@@ -40,7 +40,13 @@ type M2ActionCommitmentState = { memberAction: string; leaderSupport: string; ch
 type M2LiteLabPracticeState = { question1: string; question2: string; question3: string; actionPromise: string; leaderSupport: string };
 
 function App() {
-  const [step, setStep] = useState(0);
+  
+ const isM2Pilot =
+  typeof window !== "undefined" &&
+  new URLSearchParams(window.location.search).get("mode") === "m2-pilot";
+
+const [step, setStep] = useState(isM2Pilot ? 11 : 0);
+  
   const [sessionCode, setSessionCode] = useState("");
   const [teamName, setTeamName] = useState("");
   const [participantName, setParticipantName] = useState("");
