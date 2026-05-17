@@ -142,7 +142,6 @@ function App() {
     (step === 18 && m2AnonymizedContext.trim().length > 0) ||
     step === 19 || step === 20 ||
     (step === 21 && m2AiResponse.trim().length > 0) ||
-    step === 22 ||
     step === 23 ||
     step === 24 ||
     (step === 25 && m2FieldRewrite.trim().length > 0) ||
@@ -184,7 +183,12 @@ step === 31 ||
         {step === 19 && (<><h2>익명화 상황 입력 완료</h2><p className="subtitle">익명화된 상황 설명이 입력되었습니다. 다음 단계에서는 이 내용을 바탕으로 AI 프롬프트 생성 화면을 구현합니다.</p><div className="status-box"><strong>입력한 상황 설명</strong><span>{m2AnonymizedContext}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4D. AI 프롬프트 생성 화면</span></div></>)}
         {step === 20 && <M2PromptGenerator issue={fullLabIssue} selectedReasonIds={selectedM2ReasonIds} anonymizedContext={m2AnonymizedContext} />}
         {step === 21 && <M2AiResponsePaste value={m2AiResponse} onChange={setM2AiResponse} />}
-        {step === 22 && <M2StructuredOutputReviewFlow aiResponse={m2AiResponse} />}
+{step === 22 && (
+  <M2StructuredOutputReviewFlow
+    aiResponse={m2AiResponse}
+    onComplete={() => setStep(23)}
+  />
+)}
 {step === 23 && (
   <>
     <h2>AI 답변 결과물 정리 완료</h2>
