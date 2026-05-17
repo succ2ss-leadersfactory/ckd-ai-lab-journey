@@ -11,6 +11,7 @@ import M2AnswerReview from "./components/M2AnswerReview";
 import M2FieldRewrite from "./components/M2FieldRewrite";
 import M2ActionCommitment from "./components/M2ActionCommitment";
 import M2LiteLabIntro from "./components/M2LiteLabIntro";
+import M2LiteOutputSelector from "./components/M2LiteOutputSelector";
 import M2LitePromptGenerator from "./components/M2LitePromptGenerator";
 import M2LiteLabPractice from "./components/M2LiteLabPractice";
 import { m2Issues, type M2Issue } from "./data/m2Data";
@@ -60,6 +61,7 @@ function App() {
   const [selectedM2RiskIds, setSelectedM2RiskIds] = useState<string[]>([]);
   const [m2FieldRewrite, setM2FieldRewrite] = useState("");
   const [m2ActionCommitment, setM2ActionCommitment] = useState<M2ActionCommitmentState>({ memberAction: "", leaderSupport: "", checkInTiming: "" });
+  const [m2LiteSelectedOutputIds, setM2LiteSelectedOutputIds] = useState<string[]>([]);
   const [m2LiteLabPractice, setM2LiteLabPractice] = useState<M2LiteLabPracticeState>({ question1: "", question2: "", question3: "", actionPromise: "", leaderSupport: "" });
 
   useEffect(() => {
@@ -83,7 +85,7 @@ function App() {
   const finalPrompt = useMemo(() => `${promptRole}\n\n[상황]\n${promptSituation}\n\n[요청]\n${promptRequest}\n\n[조건]\n${promptCondition}\n\n[출력 형식]\n${promptFormat}`, [promptRole, promptSituation, promptRequest, promptCondition, promptFormat]);
 
   const goPrev = () => setStep((prev) => Math.max(0, prev - 1));
-  const goNext = () => setStep((prev) => Math.min(32, prev + 1));
+ const goNext = () => setStep((prev) => Math.min(33, prev + 1));
 
   const copyPrompt = async () => {
     try { await navigator.clipboard.writeText(finalPrompt); alert("프롬프트가 복사되었습니다."); }
@@ -110,6 +112,16 @@ function App() {
   };
   const toggleM2Reason = (reasonId: string) => setSelectedM2ReasonIds((current) => current.includes(reasonId) ? current.filter((item) => item !== reasonId) : [...current, reasonId]);
   const toggleM2Risk = (riskId: string) => setSelectedM2RiskIds((current) => current.includes(riskId) ? current.filter((item) => item !== riskId) : [...current, riskId]);
+  const toggleM2LiteOutput = (outputId: string) => {
+  setM2LiteSelectedOutputIds((current) => {
+    if (current.includes(outputId)) return current.filter((item) => item !== outputId);
+    if (current.length >= 4) {
+      alert("Lite Lab 산출물은 최대 4개까지 선택할 수 있습니다.");
+      return current;
+    }
+    return [...current, outputId];
+  });
+};
 
   const canNext = Boolean(
     step === 0 ||
@@ -136,8 +148,13 @@ function App() {
     (step === 25 && m2FieldRewrite.trim().length > 0) ||
     step === 26 ||
     (step === 27 && actionCommitmentReady) ||
-    step === 28 || step === 29 || step === 30 ||
-    (step === 31 && liteLabReady)
+    
+step === 28 ||
+step === 29 ||
+(step === 30 && m2LiteSelectedOutputIds.length >= 2 && m2LiteSelectedOutputIds.length <= 4) ||
+step === 31 ||
+(step === 32 && liteLabReady)
+    
   );
 
   return (
@@ -209,10 +226,33 @@ function App() {
 </div>
           
           <div className="status-box"><strong>다음 개발 단계</strong><span>M2 Lite Lab 시작 화면</span></div></>)}
-        {step === 29 && <M2LiteLabIntro issue={liteLabIssue} />}
-        {step === 30 && <M2LitePromptGenerator issue={liteLabIssue} />}
-        {step === 31 && <M2LiteLabPractice value={m2LiteLabPractice} onChange={setM2LiteLabPractice} />}
-        {step === 32 && (<><h2>M2 성과관리 Lab 완료</h2><p className="subtitle">성과관리 Full Lab과 Lite Lab을 모두 완료했습니다. 이제 성과 문제를 단정하지 않고, 원인 가설·현장 표현·실행 계획으로 전환하는 흐름을 경험했습니다.</p><div className="status-box"><strong>Lite Lab 질문 1</strong><span>{m2LiteLabPractice.question1}</span></div>
+        
+{step === 29 && <M2LiteLabIntro issue={liteLabIssue} />}
+
+{step === 30 && (
+  <M2LiteOutputSelector
+    selectedOutputIds={m2LiteSelectedOutputIds}
+    onToggleOutput={toggleM2LiteOutput}
+  />
+)}
+
+{step === 31 && (
+  <M2LitePromptGenerator
+    issue={liteLabIssue}
+    selectedOutputIds={m2LiteSelectedOutputIds}
+  />
+)}
+
+{step === 32 && (
+  <M2LiteLabPractice
+    value={m2LiteLabPractice}
+    onChange={setM2LiteLabPractice}
+  />
+)}
+
+{step === 33 && (
+  
+  <><h2>M2 성과관리 Lab 완료</h2><p className="subtitle">성과관리 Full Lab과 Lite Lab을 모두 완료했습니다. 이제 성과 문제를 단정하지 않고, 원인 가설·현장 표현·실행 계획으로 전환하는 흐름을 경험했습니다.</p><div className="status-box"><strong>Lite Lab 질문 1</strong><span>{m2LiteLabPractice.question1}</span></div>
           
 <div className="status-box">
   <strong>Lite Lab 2주 실행 계획</strong>
@@ -220,7 +260,7 @@ function App() {
 </div>
           
           <div className="status-box"><strong>다음 개발 단계</strong><span>M3 업무관리 Alignment Lab</span></div></>)}
-        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={goPrev} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 32} onClick={goNext} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
+        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={goPrev} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 33} onClick={goNext} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
   );
