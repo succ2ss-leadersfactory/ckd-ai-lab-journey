@@ -172,11 +172,25 @@ function App() {
         {step === 25 && <M2FieldRewrite value={m2FieldRewrite} onChange={setM2FieldRewrite} />}
         {step === 26 && (<><h2>현장 표현 다듬기 완료</h2><p className="subtitle">AI 답변을 실제 팀장이 말할 수 있는 현장 표현으로 다듬었습니다. 다음 단계에서는 2주 실행 계획을 작성합니다.</p><div className="status-box"><strong>다듬은 문장</strong><span>{m2FieldRewrite}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4H. 2주 실행 계획 화면</span></div></>)}
         {step === 27 && <M2ActionCommitment value={m2ActionCommitment} onChange={setM2ActionCommitment} />}
-        {step === 28 && (<><h2>M2 Full Lab 완료</h2><p className="subtitle">성과관리 Full Lab이 완료되었습니다. 성과 문제를 원인 가설로 보고, AI 답변을 확인한 뒤, 현장 표현과 2주 실행 계획으로 전환했습니다.</p><div className="status-box"><strong>팀원의 2주 실행 행동</strong><span>{m2ActionCommitment.memberAction}</span></div><div className="status-box"><strong>팀장의 지원</strong><span>{m2ActionCommitment.leaderSupport}</span></div><div className="status-box"><strong>Lite Lab 2주 실행 계획</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2 Lite Lab 시작 화면</span></div></>)}
+        {step === 28 && (<><h2>M2 Full Lab 완료</h2><p className="subtitle">성과관리 Full Lab이 완료되었습니다. 성과 문제를 원인 가설로 보고, AI 답변을 확인한 뒤, 현장 표현과 2주 실행 계획으로 전환했습니다.</p><div className="status-box"><strong>팀원의 2주 실행 행동</strong><span>{m2ActionCommitment.memberAction}</span></div><div className="status-box"><strong>팀장의 지원</strong><span>{m2ActionCommitment.leaderSupport}</span></div>
+          
+<div className="status-box">
+  <strong>중간 체크 시점</strong>
+  <span>{m2ActionCommitment.checkInTiming}</span>
+</div>
+          
+          <div className="status-box"><strong>다음 개발 단계</strong><span>M2 Lite Lab 시작 화면</span></div></>)}
         {step === 29 && <M2LiteLabIntro issue={liteLabIssue} />}
         {step === 30 && <M2LitePromptGenerator issue={liteLabIssue} />}
         {step === 31 && <M2LiteLabPractice value={m2LiteLabPractice} onChange={setM2LiteLabPractice} />}
-        {step === 32 && (<><h2>M2 성과관리 Lab 완료</h2><p className="subtitle">성과관리 Full Lab과 Lite Lab을 모두 완료했습니다. 이제 성과 문제를 단정하지 않고, 원인 가설·현장 표현·실행 계획으로 전환하는 흐름을 경험했습니다.</p><div className="status-box"><strong>Lite Lab 질문 1</strong><span>{m2LiteLabPractice.question1}</span></div><div className="status-box"><strong>Lite Lab 2주 실행 계획</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M3 업무관리 Alignment Lab</span></div></>)}
+        {step === 32 && (<><h2>M2 성과관리 Lab 완료</h2><p className="subtitle">성과관리 Full Lab과 Lite Lab을 모두 완료했습니다. 이제 성과 문제를 단정하지 않고, 원인 가설·현장 표현·실행 계획으로 전환하는 흐름을 경험했습니다.</p><div className="status-box"><strong>Lite Lab 질문 1</strong><span>{m2LiteLabPractice.question1}</span></div>
+          
+<div className="status-box">
+  <strong>Lite Lab 2주 실행 계획</strong>
+  <span>{m2LiteLabPractice.actionPromise}</span>
+</div>
+          
+          <div className="status-box"><strong>다음 개발 단계</strong><span>M3 업무관리 Alignment Lab</span></div></>)}
         <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={goPrev} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 32} onClick={goNext} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
