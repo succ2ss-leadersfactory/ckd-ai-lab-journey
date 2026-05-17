@@ -6,6 +6,7 @@ import M2StructuredOutputReview, {
 
 type M2StructuredOutputReviewFlowProps = {
   aiResponse: string;
+  onComplete: () => void;
 };
 
 const initialStructuredChecks: StructuredOutputChecks = {
@@ -17,7 +18,7 @@ const initialStructuredChecks: StructuredOutputChecks = {
   checkQuestions: [],
 };
 
-function M2StructuredOutputReviewFlow({ aiResponse }: M2StructuredOutputReviewFlowProps) {
+function M2StructuredOutputReviewFlow({ aiResponse, onComplete }: M2StructuredOutputReviewFlowProps) {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [selectedChecks, setSelectedChecks] = useState<StructuredOutputChecks>(initialStructuredChecks);
 
@@ -46,19 +47,6 @@ function M2StructuredOutputReviewFlow({ aiResponse }: M2StructuredOutputReviewFl
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const completeStructuredReview = () => {
-    const nextButton = document.querySelector<HTMLButtonElement>(".hero-card > .nav-row .primary-button");
-
-    if (nextButton) {
-      nextButton.disabled = false;
-      nextButton.click();
-      return;
-    }
-
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-    alert("결과물 정리는 완료되었습니다. 화면 하단의 다음 버튼으로 이동해주세요.");
-  };
-
   const goNextSection = () => {
     if (!currentSectionComplete) {
       alert("현재 결과물의 5가지 기준을 모두 체크한 뒤 다음 결과물로 이동해주세요.");
@@ -66,7 +54,7 @@ function M2StructuredOutputReviewFlow({ aiResponse }: M2StructuredOutputReviewFl
     }
 
     if (isLastSection) {
-      completeStructuredReview();
+      onComplete();
       return;
     }
 
