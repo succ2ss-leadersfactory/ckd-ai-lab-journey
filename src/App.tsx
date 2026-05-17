@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import M2IntroMobile from "./components/m2/M2IntroMobile";
+import M2IssueSelection from "./components/M2IssueSelection";
 import M2FullLabIntro from "./components/M2FullLabIntro";
 import M2ReasonHypothesis from "./components/M2ReasonHypothesis";
 import M2AnonymizedContext from "./components/M2AnonymizedContext";
@@ -31,7 +32,6 @@ const securityCards = [
 ];
 const cardOptions = ["입력 가능", "익명화 후 가능", "입력 금지", "내부 기준 확인 필요"];
 const scanLevels = ["낮음", "중간", "높음"];
-
 type M2ScanItem = { relevance: string; difficulty: string; helpAreas: string[] };
 
 function App() {
@@ -58,6 +58,10 @@ function App() {
   const [m2ActionCommitment, setM2ActionCommitment] = useState({ memberAction: "", leaderSupport: "", checkInTiming: "" });
   const [m2LiteLabPractice, setM2LiteLabPractice] = useState({ question1: "", question2: "", question3: "", actionPromise: "", leaderSupport: "" });
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
+
   const allChecked = checked.every(Boolean);
   const currentCard = securityCards[cardIndex];
   const answeredCount = cardAnswers.filter(Boolean).length;
@@ -73,40 +77,26 @@ function App() {
   const finalPrompt = useMemo(() => `${promptRole}\n\n[상황]\n${promptSituation}\n\n[요청]\n${promptRequest}\n\n[조건]\n${promptCondition}\n\n[출력 형식]\n${promptFormat}`, [promptRole, promptSituation, promptRequest, promptCondition, promptFormat]);
 
   const copyPrompt = async () => {
-    try {
-      await navigator.clipboard.writeText(finalPrompt);
-      alert("프롬프트가 복사되었습니다.");
-    } catch {
-      alert("복사가 되지 않았습니다. 프롬프트를 직접 선택해서 복사해주세요.");
-    }
+    try { await navigator.clipboard.writeText(finalPrompt); alert("프롬프트가 복사되었습니다."); }
+    catch { alert("복사가 되지 않았습니다. 프롬프트를 직접 선택해서 복사해주세요."); }
   };
   const updateM2Scan = (index: number, key: "relevance" | "difficulty", value: string) => {
-    const next = [...m2Scan];
-    next[index] = { ...next[index], [key]: value };
-    setM2Scan(next);
+    const next = [...m2Scan]; next[index] = { ...next[index], [key]: value }; setM2Scan(next);
   };
   const toggleM2HelpArea = (index: number, value: string) => {
-    const next = [...m2Scan];
-    const current = next[index].helpAreas;
+    const next = [...m2Scan]; const current = next[index].helpAreas;
     next[index] = { ...next[index], helpAreas: current.includes(value) ? current.filter((item) => item !== value) : [...current, value] };
     setM2Scan(next);
   };
   const toggleM2IssueSelection = (code: string) => {
     setSelectedM2IssueCodes((current) => {
       if (current.includes(code)) return current.filter((item) => item !== code);
-      if (current.length >= 2) {
-        alert("핵심 상황은 2개까지만 선택할 수 있습니다.");
-        return current;
-      }
+      if (current.length >= 2) { alert("핵심 상황은 2개까지만 선택할 수 있습니다."); return current; }
       return [...current, code];
     });
   };
-  const toggleM2Reason = (reasonId: string) => {
-    setSelectedM2ReasonIds((current) => current.includes(reasonId) ? current.filter((item) => item !== reasonId) : [...current, reasonId]);
-  };
-  const toggleM2Risk = (riskId: string) => {
-    setSelectedM2RiskIds((current) => current.includes(riskId) ? current.filter((item) => item !== riskId) : [...current, riskId]);
-  };
+  const toggleM2Reason = (reasonId: string) => setSelectedM2ReasonIds((current) => current.includes(reasonId) ? current.filter((item) => item !== reasonId) : [...current, reasonId]);
+  const toggleM2Risk = (riskId: string) => setSelectedM2RiskIds((current) => current.includes(riskId) ? current.filter((item) => item !== riskId) : [...current, riskId]);
 
   const canNext = Boolean(
     step === 0 ||
@@ -114,22 +104,18 @@ function App() {
     (step === 2 && teamName.trim() && participantName.trim()) ||
     (step === 3 && selectedRole) ||
     (step === 4 && allChecked) ||
-    step === 5 ||
-    step === 6 ||
+    step === 5 || step === 6 ||
     (step === 7 && allCardsAnswered) ||
     step === 8 ||
     (step === 9 && promptReady) ||
-    step === 10 ||
-    step === 11 ||
+    step === 10 || step === 11 ||
     (step === 12 && allM2ScanComplete) ||
     (step === 13 && selectedM2IssueCodes.length === 2) ||
-    step === 14 ||
-    step === 15 ||
+    step === 14 || step === 15 ||
     (step === 16 && selectedM2ReasonIds.length > 0) ||
     step === 17 ||
     (step === 18 && m2AnonymizedContext.trim().length > 0) ||
-    step === 19 ||
-    step === 20 ||
+    step === 19 || step === 20 ||
     (step === 21 && m2AiResponse.trim().length > 0) ||
     step === 22 ||
     (step === 23 && selectedM2RiskIds.length > 0) ||
@@ -137,11 +123,11 @@ function App() {
     (step === 25 && m2FieldRewrite.trim().length > 0) ||
     step === 26 ||
     (step === 27 && actionCommitmentReady) ||
-    step === 28 ||
-    step === 29 ||
-    step === 30 ||
+    step === 28 || step === 29 || step === 30 ||
     (step === 31 && liteLabReady)
   );
+  const goPrev = () => setStep((prev) => Math.max(0, prev - 1));
+  const goNext = () => setStep((prev) => Math.min(32, prev + 1));
 
   return (
     <main className="app-shell">
@@ -159,12 +145,12 @@ function App() {
         {step === 8 && (<><h2>AI 보안 기준 분류 완료</h2><p className="subtitle">이제 다음 단계에서는 역할, 상황, 요청, 조건, 출력 형식을 갖춘 좋은 AI 질문문을 작성합니다.</p><div className="status-box"><strong>다음 산출물</strong><span>보안 기준을 반영한 AI 질문문 초안</span></div></>)}
         {step === 9 && (<><h2>좋은 AI 질문문 작성</h2><p className="subtitle">역할, 상황, 요청, 조건, 출력 형식을 채우면 다음 단계에서 하나의 프롬프트로 조합합니다.</p><label className="field-group">역할<textarea value={promptRole} onChange={(e) => setPromptRole(e.target.value)} /></label><label className="field-group">상황<textarea value={promptSituation} onChange={(e) => setPromptSituation(e.target.value)} /></label><label className="field-group">요청<textarea value={promptRequest} onChange={(e) => setPromptRequest(e.target.value)} /></label><label className="field-group">조건<textarea value={promptCondition} onChange={(e) => setPromptCondition(e.target.value)} /></label><label className="field-group">출력 형식<textarea value={promptFormat} onChange={(e) => setPromptFormat(e.target.value)} /></label></>)}
         {step === 10 && (<><h2>M1 최종 프롬프트</h2><p className="subtitle">보안 기준을 반영한 질문문입니다. 외부 AI 도구에 복사해 사용할 수 있습니다.</p><pre className="prompt-preview">{finalPrompt}</pre><button className="primary-button standalone" onClick={copyPrompt} type="button">프롬프트 복사</button><div className="status-box"><strong>M1 완료</strong><span>다음 개발 단계에서는 M2 성과관리 Decision Lab을 구현합니다.</span></div></>)}
-        {step === 11 && (<M2IntroMobile onPrev={() => setStep((prev) => Math.max(0, prev - 1))} onNext={() => setStep((prev) => Math.min(32, prev + 1))} canGoPrev={step > 0} />)}
+        {step === 11 && (<M2IntroMobile onPrev={goPrev} onNext={goNext} canGoPrev={step > 0} />)}
         {step === 12 && (<><h2>성과관리 이슈 살펴보기</h2><p className="subtitle">5개 이슈를 살펴보고, 우리 팀 관련도·리더 판단 난이도·AI 도움받고 싶은 지점을 체크합니다. AI 도움받고 싶은 지점은 복수 선택할 수 있습니다.</p><div className="scan-list">{m2Issues.map((issue, index) => (<article className="scan-card" key={issue.code}><div className="scan-card-header"><b>{issue.code}</b><div><strong>{issue.title}</strong><p>{issue.situation}</p><span>판단 초점: {issue.focus}</span></div></div><div className="pulse-row"><span>우리 팀 관련도</span><div className="chip-row">{scanLevels.map((level) => (<button key={level} className={m2Scan[index].relevance === level ? "chip-button selected" : "chip-button"} onClick={() => updateM2Scan(index, "relevance", level)} type="button">{level}</button>))}</div></div><div className="pulse-row"><span>리더 판단 난이도</span><div className="chip-row">{scanLevels.map((level) => (<button key={level} className={m2Scan[index].difficulty === level ? "chip-button selected" : "chip-button"} onClick={() => updateM2Scan(index, "difficulty", level)} type="button">{level}</button>))}</div></div><div className="pulse-row help-row"><span>AI 도움받고 싶은 지점 (복수 선택 가능)</span><div className="chip-row wrap-chip-row">{issue.helpOptions.map((option) => (<button key={option} className={m2Scan[index].helpAreas.includes(option) ? "chip-button selected" : "chip-button"} onClick={() => toggleM2HelpArea(index, option)} type="button">{option}</button>))}</div></div></article>))}</div><div className="status-box compact-status"><strong>살펴보기 진행률</strong><span>{m2ScanCompleteCount} / {m2Issues.length}개 이슈 체크 완료</span>{!allM2ScanComplete && <span>모든 이슈에서 관련도·난이도·AI 도움 지점을 선택하면 다음 단계로 이동할 수 있습니다.</span>}{allM2ScanComplete && <span>성과관리 이슈 살펴보기를 완료했습니다. 다음 단계에서는 핵심 상황 2개를 선택합니다.</span>}</div></>)}
-        {step === 13 && (<><h2>핵심 상황 2개 선택</h2><p className="subtitle">살펴본 성과관리 이슈 중 이번 실습에서 다룰 핵심 상황 2개를 선택해주세요. 하나는 Full Lab으로 깊게 다루고, 하나는 Lite Lab으로 빠르게 적용합니다.</p><div className="scan-list">{m2Issues.map((issue) => { const selected = selectedM2IssueCodes.includes(issue.code); return (<button key={issue.code} className={selected ? "choice-button selected" : "choice-button"} onClick={() => toggleM2IssueSelection(issue.code)} type="button"><strong>{issue.code}. {issue.title}</strong><span>{issue.situation}</span></button>); })}</div><div className="status-box compact-status"><strong>선택 진행률</strong><span>{selectedM2IssueCodes.length} / 2개 선택</span>{selectedM2IssueCodes.length < 2 && <span>핵심 상황을 2개 선택해야 다음 단계로 이동할 수 있습니다.</span>}{selectedM2IssueCodes.length === 2 && <span>핵심 상황 2개 선택이 완료되었습니다.</span>}</div></>)}
+        {step === 13 && (<M2IssueSelection issues={m2Issues} selectedIssueCodes={selectedM2IssueCodes} onToggleIssue={toggleM2IssueSelection} />)}
         {step === 14 && (<><h2>핵심 상황 선택 완료</h2><p className="subtitle">선택한 2개 상황을 확인해주세요. 다음 단계에서는 첫 번째 상황을 Full Lab으로 깊게 다룹니다.</p><div className="scan-list">{selectedM2Issues.map((issue, index) => (<article className="scan-card" key={issue.code}><div className="scan-card-header"><b>{index === 0 ? "Full" : "Lite"}</b><div><strong>{issue.code}. {issue.title}</strong><p>{issue.situation}</p><span>판단 초점: {issue.focus}</span></div></div></article>))}</div><div className="status-box"><strong>다음 단계</strong><span>첫 번째 선택 상황을 Full Lab으로 깊게 다룹니다.</span></div></>)}
         {step === 15 && <M2FullLabIntro issue={fullLabIssue} />}
-        {step === 16 && <M2ReasonHypothesis selectedReasonIds={selectedM2ReasonIds} onToggleReason={toggleM2Reason} />}
+        {step === 16 && <M2ReasonHypothesis issue={fullLabIssue} selectedReasonIds={selectedM2ReasonIds} onToggleReason={toggleM2Reason} />}
         {step === 17 && (<><h2>원인 가설 선택 완료</h2><p className="subtitle">선택한 원인 가설을 바탕으로 다음 단계에서는 실제 고객명·제품명·팀원 실명 없이 익명화된 상황 설명을 작성합니다.</p><div className="status-box"><strong>선택한 원인 가설 수</strong><span>{selectedM2ReasonIds.length}개</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4C. 익명화 상황 입력 화면</span></div></>)}
         {step === 18 && <M2AnonymizedContext issue={fullLabIssue} value={m2AnonymizedContext} onChange={setM2AnonymizedContext} />}
         {step === 19 && (<><h2>익명화 상황 입력 완료</h2><p className="subtitle">익명화된 상황 설명이 입력되었습니다. 다음 단계에서는 이 내용을 바탕으로 AI 프롬프트 생성 화면을 구현합니다.</p><div className="status-box"><strong>입력한 상황 설명</strong><span>{m2AnonymizedContext}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4D. AI 프롬프트 생성 화면</span></div></>)}
@@ -181,7 +167,7 @@ function App() {
         {step === 30 && <M2LitePromptGenerator issue={liteLabIssue} />}
         {step === 31 && <M2LiteLabPractice value={m2LiteLabPractice} onChange={setM2LiteLabPractice} />}
         {step === 32 && (<><h2>M2 성과관리 Lab 완료</h2><p className="subtitle">성과관리 Full Lab과 Lite Lab을 모두 완료했습니다. 이제 성과 문제를 단정하지 않고, 원인 가설·현장 표현·실행 계획으로 전환하는 흐름을 경험했습니다.</p><div className="status-box"><strong>Lite Lab 질문 1</strong><span>{m2LiteLabPractice.question1}</span></div><div className="status-box"><strong>Lite Lab 2주 실행 계획</strong><span>{m2LiteLabPractice.actionPromise}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M3 업무관리 Alignment Lab</span></div></>)}
-        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={() => setStep((prev) => Math.max(0, prev - 1))} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 32} onClick={() => setStep((prev) => Math.min(32, prev + 1))} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
+        <div className="nav-row"><button className="secondary-button" disabled={step === 0} onClick={goPrev} type="button">이전</button><button className="primary-button" disabled={!canNext || step === 32} onClick={goNext} type="button">{step === 0 ? "Lab Journey 시작하기" : "다음"}</button></div>
       </section>
     </main>
   );
