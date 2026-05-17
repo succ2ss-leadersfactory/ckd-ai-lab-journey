@@ -131,7 +131,7 @@ function App() {
     step === 19 || step === 20 ||
     (step === 21 && m2AiResponse.trim().length > 0) ||
     step === 22 ||
-    (step === 23 && selectedM2RiskIds.length > 0) ||
+    step === 23 ||
     step === 24 ||
     (step === 25 && m2FieldRewrite.trim().length > 0) ||
     step === 26 ||
@@ -168,8 +168,36 @@ function App() {
         {step === 20 && <M2PromptGenerator issue={fullLabIssue} selectedReasonIds={selectedM2ReasonIds} anonymizedContext={m2AnonymizedContext} />}
         {step === 21 && <M2AiResponsePaste value={m2AiResponse} onChange={setM2AiResponse} />}
         {step === 22 && <M2StructuredOutputReviewFlow aiResponse={m2AiResponse} />}
-        {step === 23 && <M2AnswerReview selectedRiskIds={selectedM2RiskIds} onToggleRisk={toggleM2Risk} />}
-        {step === 24 && (<><h2>AI 답변 감별 완료</h2><p className="subtitle">AI 답변에서 보완할 지점을 확인했습니다. 다음 단계에서는 이 결과를 바탕으로 실제 팀장이 말할 수 있는 현장 표현으로 다듬습니다.</p><div className="status-box"><strong>선택한 보완 지점 수</strong><span>{selectedM2RiskIds.length}개</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4G. 현장 표현으로 다듬기 화면</span></div></>)}
+{step === 23 && (
+  <>
+    <h2>AI 답변 결과물 정리 완료</h2>
+    <p className="subtitle">
+      AI 답변을 6개 결과물로 나누어 확인했습니다. 다음 단계에서는 확인한 내용을 바탕으로 현장 표현으로 다듬습니다.
+    </p>
+    <div className="status-box">
+      <strong>정리한 결과물</strong>
+      <span>대화 오프닝 / 성과 코칭 질문 / 주의할 표현 / 2주 실행 계획 / 팀장의 지원 / 중간 체크 질문</span>
+    </div>
+    <div className="status-box">
+      <strong>다음 단계</strong>
+      <span>현장 표현으로 다듬기</span>
+    </div>
+  </>
+)}
+      {step === 24 && (
+  <>
+    <h2>현장 표현으로 다듬기 준비</h2>
+    <p className="subtitle">
+      AI 답변에서 확인한 내용을 바탕으로, 실제 팀장이 말할 수 있는 문장으로 다듬어봅니다.
+    </p>
+    <div className="status-box">
+      <strong>다듬기 기준</strong>
+      <span>구체성, 맥락 반영, 실행 가능성, 리더 언어, 사실 검증 가능성을 반영합니다.</span>
+    </div>
+  </>
+)}  
+        
+       
         {step === 25 && <M2FieldRewrite value={m2FieldRewrite} onChange={setM2FieldRewrite} />}
         {step === 26 && (<><h2>현장 표현 다듬기 완료</h2><p className="subtitle">AI 답변을 실제 팀장이 말할 수 있는 현장 표현으로 다듬었습니다. 다음 단계에서는 2주 실행 계획을 작성합니다.</p><div className="status-box"><strong>다듬은 문장</strong><span>{m2FieldRewrite}</span></div><div className="status-box"><strong>다음 개발 단계</strong><span>M2-4H. 2주 실행 계획 화면</span></div></>)}
         {step === 27 && <M2ActionCommitment value={m2ActionCommitment} onChange={setM2ActionCommitment} />}
