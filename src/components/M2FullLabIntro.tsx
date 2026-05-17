@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { M2Issue } from "../data/m2Data";
 
 type M2FullLabIntroProps = {
@@ -5,12 +6,18 @@ type M2FullLabIntroProps = {
 };
 
 function M2FullLabIntro({ issue }: M2FullLabIntroProps) {
+  useEffect(() => {
+    if (issue) {
+      window.sessionStorage.setItem("m2FullLabIssue", JSON.stringify(issue));
+    }
+  }, [issue]);
+
   return (
     <>
       <h2>M2 Full Lab 시작</h2>
       <p className="subtitle">
         첫 번째 선택 상황을 중심으로 성과 문제를 단정하지 않고, 원인 가설과
-        성과대화, 2주 행동 약속까지 깊게 설계합니다.
+        성과 코칭, 2주 실행 계획까지 깊게 설계합니다.
       </p>
 
       {issue ? (
@@ -36,8 +43,8 @@ function M2FullLabIntro({ issue }: M2FullLabIntroProps) {
       <div className="status-box">
         <strong>Full Lab 진행 흐름</strong>
         <span>
-          원인 가설 선택 → 익명화 상황 입력 → AI 프롬프트 생성 → AI 답변 감별 →
-          현장 언어 수정 → 2주 행동 약속
+          원인 가설 선택 → 익명화 상황 입력 → AI 프롬프트 생성 → AI 답변 5가지 기준 체크 →
+          현장 표현으로 다듬기 → 2주 실행 계획
         </span>
       </div>
 
